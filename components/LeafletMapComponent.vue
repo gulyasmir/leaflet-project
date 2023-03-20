@@ -3,16 +3,30 @@
   <div class="map-component">
     <div id="map-wrap" style="height: 500px">
       <client-only>
-        <LMap :zoom="mapData.zoom" :center="mapData.center" :options="{ zoomControl: false }">
+        <LMap
+          :zoom="selectedMap.zoom"
+          :center="selectedMap.center"
+          :options="{ zoomControl: false }"
+        >
           <LTileLayer
             :url="url"
             :attribution="attribution"
-            :bounds="bounds"
+            :bounds="selectedMap.bounds"
             :opacity="1"
           />
 
-          <LImageOverlay :url="mapData.urlImageOverlay" :bounds="mapData.bounds" :opacity="0.5" />
-          <ChoroplethLayerComponent  :bounds="mapData.bounds"  />
+          <LImageOverlay
+            :url="'/images/svg/' + selectedMap.mapURL + '.svg'"
+            :bounds="selectedMap.bounds"
+            :opacity="1"
+          />
+          <!--
+            пока не показываем 
+            <ChoroplethLayerComponent
+                      v-if="selectedMapId === 1"
+                      :bounds="bounds"
+                    />
+          -->
 
           <LControl position="topleft">
             <LeftConrolList :list="listData" />
@@ -76,15 +90,14 @@
         </LMap>
       </client-only>
     </div>
-   
 
-<select  v-model="selected" >
-    <option value="0">--Выберите место--</option>
-    <option v-for="map in mapsList" v-bind:value="map.id">
-   {{ map.title }}
-  </option>
-   
-</select>
+    <select v-model="selectedMapId">
+      <option value="0">--Выберите место--</option>
+      <option v-for="map in mapsList" v-bind:value="map.id">
+        {{ map.title }}
+      </option>
+    </select>
+    {{ selectedMap }}
   </div>
 </template>
 
@@ -104,8 +117,8 @@ import { InfoControl, ReferenceChart, ChoroplethLayer } from "vue-choropleth";
 import "leaflet/dist/leaflet.css";
 import InfoBlock from "./InfoBlock";
 import LeftConrolList from "./LeftConrolList";
-import ChoroplethLayerComponent from "./ChoroplethLayerComponent"
-import json from "../static/json/poligons.json";
+import ChoroplethLayerComponent from "./ChoroplethLayerComponent";
+
 export default {
   name: "ChoroplethLayer",
   components: {
@@ -130,33 +143,37 @@ export default {
       type: Array,
       defautl: [],
     },
-    mapsList:{
+    mapsList: {
       type: Array,
       defautl: [],
-    }
+    },
   },
   data() {
     return {
-      mapData:{
-        urlImageOverlay: "/images/svg/russia.svg",
+      selectedMap: {
+        id: 1,
+        mapURL: "russia",
         bounds: [
-        [82.265536, 17.356231],
-        [34.072684, 174.990258],
-      ],
-        center:[63.529039, 91.904869],
-      zoom:3,
-
+          [82.265536, 17.356231],
+          [34.072684, 174.990258],
+        ],
+        title: "Россия",
+        center: [63.529039, 91.904869],
+        zoom: 3,
       },
-      selected:0,
+
+      selectedMapId: 1,
+      center: [63.529039, 91.904869],
+      zoom: 3,
       bounds: [
         [82.265536, 17.356231],
         [34.072684, 174.990258],
       ],
-      boundsPNG: [  //"urlImageOverlay.png",
+      boundsPNG: [
+        //"urlImageOverlay.png",
         [79.866595, 15.846277],
         [33.321477, 194.317789],
       ],
-
 
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
@@ -214,8 +231,6 @@ export default {
           ],
         },
       ],
-
-
       // urlImageOverlay: "/images/urlImageOverlay.png",
       // crs: L.CRS.Simple,
       // //bounds: [66.058, 189.459], // json.bbox,
@@ -229,6 +244,11 @@ export default {
     // L.marker([51.5, -0.09], {icon: greenIcon}).addTo(map);
   },
   methods: {
+    setMap(mapId) {
+      this.selectedMap = this.mapsList.find(function (elem) {
+        return elem.id === mapId;
+      });
+    },
     setIcon(forecastsIcon, uvIcon) {
       switch (this.viewData) {
         case "forecasts":
@@ -254,6 +274,12 @@ export default {
     changeBlock(city) {
       // вставка вместо карты блока  информации о погоде в этом регионе
       console.log("changeBlock", city);
+    },
+  },
+  watch: {
+    selectedMapId() {
+      console.log("this.selectedMapId", this.selectedMapId);
+      this.setMap(this.selectedMapId);
     },
   },
   computed: {

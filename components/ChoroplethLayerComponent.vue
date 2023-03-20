@@ -14,9 +14,9 @@
 </template>
 
 <script>
-import { InfoControl, ReferenceChart, ChoroplethLayer } from "vue-choropleth";
+import { ReferenceChart, ChoroplethLayer } from "vue-choropleth";
 
-import json from "../static/json/poligons.json";
+import json from "../static/json/poligons.json"; //geojsonrussia.json
 export default {
   name: "ChoroplethLayerComponent",
   components: {
