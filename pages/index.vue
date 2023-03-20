@@ -91,7 +91,7 @@ export default {
           },
         },
       ],
-      maps:maps
+      maps:maps.maps
 }
 },
 mounted() {

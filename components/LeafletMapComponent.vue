@@ -97,7 +97,7 @@
         {{ map.title }}
       </option>
     </select>
-    {{ selectedMap }}
+   
   </div>
 </template>
 
