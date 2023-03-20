@@ -186,8 +186,8 @@ export default {
       listData: [
         {
           id: 1,
-          day: "Понедельник",
-          date: "18",
+          day: "Вторник",
+          date: "21",
           listTime: [
             {
               id: 1,
@@ -209,8 +209,8 @@ export default {
         },
         {
           id: 2,
-          day: "Вторник",
-          date: "20",
+          day: "Среда",
+          date: "22",
           listTime: [
             {
               id: 1,
