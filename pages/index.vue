@@ -5,10 +5,14 @@
 </template>
 
 <script>
+import forecastStations from '../static/json/forecast_stations.json'
+
 export default {
   name: "IndexPage",
+
   data() {
     return {
+      forecastStations: forecastStations,
       cities: [
         {
           id: 1,
@@ -145,6 +149,32 @@ export default {
         }
       ]
 }
+},
+mounted() {
+  this.fetchSomething()
+},
+methods:{
+  async fetchSomething() {
+    let url = 'https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata'
+/*--header 'X-Ticket: ST-test' \
+--header 'Content-Type: application/json' \
+--data '{
+  "sid": ["RU80-980401-0000", "RU98-998401-0000"],
+  "dst": ["FRC-WTH-DATA-XXXXXXXXXXX"]
+}'
+*/
+    const res = await this.$axios.$post(url, {
+    headers: {
+      'X-Ticket': 'ST-test',
+      'Content-Type': 'application/json'
+    },
+    data: {
+  "sid": ["RU80-980401-0000", "RU98-998401-0000"],
+  "dst": ["FRC-WTH-DATA-XXXXXXXXXXX"]
+}
+})
+    console.log('res', res)
+  }
 }
 };
 </script>
