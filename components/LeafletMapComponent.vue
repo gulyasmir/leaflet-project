@@ -1,0 +1,354 @@
+<!-- Please remove this file from your project -->
+<template>
+  <div class="map-component">
+    <div id="map-wrap" style="height: 500px">
+      <client-only>
+        <LMap :zoom="mapData.zoom" :center="mapData.center" :options="{ zoomControl: false }">
+          <LTileLayer
+            :url="url"
+            :attribution="attribution"
+            :bounds="bounds"
+            :opacity="1"
+          />
+
+          <LImageOverlay :url="mapData.urlImageOverlay" :bounds="mapData.bounds" :opacity="0.5" />
+          <ChoroplethLayerComponent  :bounds="mapData.bounds"  />
+
+          <LControl position="topleft">
+            <LeftConrolList :list="listData" />
+          </LControl>
+
+          <LControl>
+            <div class="map-buttons">
+              <button
+                :class="'forecasts-button ' + activeForecastsButton"
+                @click="setViewData('forecasts')"
+              >
+                Прогноз
+              </button>
+              <button
+                :class="'wind-button ' + activeWindButton"
+                @click="setViewData('wind')"
+              >
+                Ветер
+              </button>
+            </div>
+          </LControl>
+          <div v-if="citiesList.length">
+            <div v-for="city in citiesList" :key="city.id">
+              <div @click="changeBlock(city)">
+                <LMarker
+                  :lat-lng="[city.coords.latitude, city.coords.longitude]"
+                >
+                  <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
+                    <InfoBlock :viewData="viewData" :city="city" />
+                  </LIcon>
+                  <LTooltip>
+                    <template>
+                      <div class="tooltip-bg">
+                        <div class="title">{{ city.title }}</div>
+                        <div class="info">
+                          <template>
+                            <InfoBlock
+                              :viewData="viewData"
+                              :city="city"
+                              :tooltip="'tooltip'"
+                            />
+                          </template>
+                          <p class="min-max-info">
+                            Min:
+                            <span class="blue-text"
+                              >{{ city.forecasts.min }}°
+                            </span>
+                            Max:
+                            <span class="orange-text"
+                              >{{ city.forecasts.max }}°
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    </template>
+                  </LTooltip>
+                </LMarker>
+              </div>
+            </div>
+          </div>
+        </LMap>
+      </client-only>
+    </div>
+   
+
+<select  v-model="selected" >
+    <option value="0">--Выберите место--</option>
+    <option v-for="map in mapsList" v-bind:value="map.id">
+   {{ map.title }}
+  </option>
+   
+</select>
+  </div>
+</template>
+
+<script>
+////[55.4424, 37.3636]"
+import {
+  LMap,
+  LTileLayer,
+  LImageOverlay,
+  LMarker,
+  LIcon,
+  LTooltip,
+  LControl,
+  LGeoJson,
+} from "vue2-leaflet";
+import { InfoControl, ReferenceChart, ChoroplethLayer } from "vue-choropleth";
+import "leaflet/dist/leaflet.css";
+import InfoBlock from "./InfoBlock";
+import LeftConrolList from "./LeftConrolList";
+import ChoroplethLayerComponent from "./ChoroplethLayerComponent"
+import json from "../static/json/poligons.json";
+export default {
+  name: "ChoroplethLayer",
+  components: {
+    LMap,
+    LTileLayer,
+    LImageOverlay,
+    LMarker,
+    LIcon,
+    LTooltip,
+    LControl,
+    LGeoJson,
+    ChoroplethLayerComponent,
+
+    InfoControl,
+    ReferenceChart,
+    ChoroplethLayer,
+    InfoBlock,
+    LeftConrolList,
+  },
+  props: {
+    citiesList: {
+      type: Array,
+      defautl: [],
+    },
+    mapsList:{
+      type: Array,
+      defautl: [],
+    }
+  },
+  data() {
+    return {
+      mapData:{
+        urlImageOverlay: "/images/svg/russia.svg",
+        bounds: [
+        [82.265536, 17.356231],
+        [34.072684, 174.990258],
+      ],
+        center:[63.529039, 91.904869],
+      zoom:3,
+
+      },
+      selected:0,
+      bounds: [
+        [82.265536, 17.356231],
+        [34.072684, 174.990258],
+      ],
+      boundsPNG: [  //"urlImageOverlay.png",
+        [79.866595, 15.846277],
+        [33.321477, 194.317789],
+      ],
+
+
+      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      attribution:
+        '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      staticAnchor: [16, 37],
+      iconSize: 30,
+      viewData: "forecasts",
+      activeForecastsButton: "active",
+      activeWindButton: "",
+      listData: [
+        {
+          id: 1,
+          day: "Понедельник",
+          date: "18",
+          listTime: [
+            {
+              id: 1,
+              title: "Утро",
+            },
+            {
+              id: 2,
+              title: "Полдень",
+            },
+            {
+              id: 3,
+              title: "Вечер",
+            },
+            {
+              id: 4,
+              title: "Ночь",
+            },
+          ],
+        },
+        {
+          id: 2,
+          day: "Вторник",
+          date: "20",
+          listTime: [
+            {
+              id: 1,
+              title: "Утро",
+            },
+            {
+              id: 2,
+              title: "Полдень",
+            },
+            {
+              id: 3,
+              title: "Вечер",
+            },
+            {
+              id: 4,
+              title: "Ночь",
+            },
+          ],
+        },
+      ],
+
+
+      // urlImageOverlay: "/images/urlImageOverlay.png",
+      // crs: L.CRS.Simple,
+      // //bounds: [66.058, 189.459], // json.bbox,
+      // geojson: { type: "FeatureCollection", features: json },
+    };
+  },
+  mounted() {
+    this.$nextTick(() => {
+      // this.$refs.myMap.mapObject.ANY_LEAFLET_MAP_METHOD();
+    });
+    // L.marker([51.5, -0.09], {icon: greenIcon}).addTo(map);
+  },
+  methods: {
+    setIcon(forecastsIcon, uvIcon) {
+      switch (this.viewData) {
+        case "forecasts":
+          return "images/" + forecastsIcon;
+        case "wind":
+          return "images/wind.svg";
+        case "uv":
+          return "images/" + uvIcon;
+        default:
+          return "images/" + forecastsIcon;
+      }
+    },
+    setViewData(type) {
+      this.viewData = type;
+      this.activeForecastsButton = type === "forecasts" ? "active" : "";
+      this.activeWindButton = type === "wind" ? "active" : "";
+    },
+    mapIconStyle(iconRotate) {
+      return this.viewData === "wind"
+        ? "transform: rotate(" + iconRotate + "deg); width:30px; height:30px"
+        : "";
+    },
+    changeBlock(city) {
+      // вставка вместо карты блока  информации о погоде в этом регионе
+      console.log("changeBlock", city);
+    },
+  },
+  computed: {
+    dynamicSize() {
+      return [this.iconSize, this.iconSize / 1.15];
+    },
+    dynamicAnchor() {
+      return [this.iconSize / 2, this.iconSize / 1.15];
+    },
+  },
+};
+</script>
+
+<style>
+.map-component {
+  width: 100%;
+  height: 100%;
+}
+.black-weight-text {
+  font-size: 16px;
+  color: #333333;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+}
+
+.tooltip-bg {
+  opacity: 0.8;
+  background-color: #fff;
+  padding: 5px 70px;
+  border-radius: 3px;
+}
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #036ba1;
+  padding: 5px;
+}
+.min-max-info {
+  padding: 5px 0 0 0;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+.blue-text {
+  color: #0381a1;
+}
+.orange-text {
+  color: #f47a20;
+}
+.map-buttons button {
+  width: 16px;
+  height: 11px;
+  padding: 5px 10px;
+  border: none;
+  width: 150px;
+  height: 30px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+}
+.map-buttons button.active {
+  color: #036ba1;
+}
+
+.forecasts-button {
+  background: #036ba1;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAgCAYAAABgrToAAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAKKADAAQAAAABAAAAIAAAAABKli1tAAAENElEQVRYCeWYWWxNURSGW2NjqFA1VEkH0hJN2oggEWmLBDFUiCESEUoknoQHoQ+GmBLhTeKFiAdEIiHxRvCAVFM1U0MUVTU3NbTV4fr+5u7b02OfU71OvVjJl73PWmuvvc6e7j43JuZ/k1AoNArm294bfTpsgO42+z/R0bmRXGeHKJV4TdiY4LT51bv5GaO0XaVdC0xztR/PczN8gJ4um+djVyR4gd5CMMvV62KeB0FJbGxstcsW/CNTdSk8XWOc0dHlQ6NsLr1U0u936RPRPYG7Tv1f1wn4EprhI0xyBuR5O2x06Zajuwm9jZ56X7gOrS9EmWRspow1lc6WBBtBm/OQDS9gIVN3jzIG2wCKGZAGOfADyqAUivHDJdSfegXItwamo79DGZwoEfip3pCJiky5BsrhC7SAkQYq0p2EZJgIkg+Q65VV1CNoAhJcU5YKz+Es5EIPeAca2WLIgLEwBDRi8s2HTGhm5C5TBickpTlKgSzIhng4BLWgET0IkbVmeka3FiRau5JkYwukJGAa7IJHoE1SCa/gXbj8TLnPrzPs46ECmuCo8aWeB5vhCkg0K38uNCgEJaAR0tp6D6+hCupBUg03YLhfZOwrQLH0cqNhJUiUtBndAr8Y7Ww02gv6mVJyevvdMBUyYDKsAi1+HTlG2p2PzoA49ALNwHdYDbNBUgw7YKbT37eOs37cFUw7sBSGejXANg807Rrhu+C5xrBdBEm7g9srtlVP4yR4Bho5TclvC9/dEB/nGjvCs/WkQC+b5LA7hvO5o9/iZTiPhEoYy3HQ4Gxsq+NzH30h1MIcGE4SIgWGgulTm0A/h1UQnRDsFmjR7ulMBPy1xp5CHfwArVttCC2V+1AE2mDaaHmwCCSnoADSO+wPpx5ggkzpsIHLgbanQS+nHf4GFOstNEFDGG2SODgG5iTQWhf6CbULRiU3DsxR0rkzibC0TQbtyk2QCQkwBrRLn4ASlegk6A7ajGdAx5akyJodhiVwG7Qb9YZfIcvqHKWSePHhuLrFaClETgbqg/UMZq229YJyJ+i80xRozWgN6W0D/4Ygpk4ITb0GYUtbFh41nJaCktNhewLSwHpEeITotJr4B0CjWOLbGId+8BA0Ypd8nQM00lcOaM1ptvrYQpt51o04EfRBs8Dm2EW6L8RtDjPQ1odJULdj3dOqOWi/2Ry7SDeMuHGgNf7J1odJsAljPVjfwtYwIN064gyGFwyM+rcL858K2lE6SEfbvYLV0k866CjTJVeJegsO+mm6BrqF3IHIueTdKnoL8aeE+6JovSHFe0WLHCM46rvhMWi6dSnYBmXwE4IQ/dugb5L1MAE0COo/k+ktp7RKJEFZSXIyxXFIAS1c7bJGCELUV1/Q5+ZneApzSe4jpae0S1BeJKk/draCPiP1Tatv1iBEVyvNzAM4BedIro7SV34B0Hlk8hI4MvAAAAAASUVORK5CYII=");
+  background-repeat: no-repeat;
+  background-position: left 10px center;
+  background-size: 25px;
+  border-radius: 4px 0 0 4px;
+}
+.forecasts-button.active {
+  background: #fff;
+  background-image: url("data:image/png;base64,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");
+  background-repeat: no-repeat;
+  background-position: left 10px center;
+  background-size: 25px;
+}
+.wind-button {
+  background: #036ba1;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAYCAYAAACbU/80AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAGAAAAAA915G0AAABv0lEQVRIDc2WzytEURTHvUmjZKVsJCUbFCkiCwsbG6Gs2SgLZWFhZ6lsTVn6B9QslDDNGrOwsyJrs2AzNBaimetzZu7U6Xn3WrgvTn3n/Lrz/Z477773pq0tZTPGZMAOuAGv4BKspyzbpEdIxAsgyY5SHwLVLaVcIy6rXMLFVIdA4N4KvuBHRQw/Bz5tvZjaAAh0Atm12KEWIj9tVI15yuhG4PgDvmfLee7grjvqYcrssg/MajZbe7O/QCHSTR2zYJC8S9d+GYvWMNgDwi220XSxT8RX7YRpuhLkkesMjMdmCp0WIFyOosi0O5hz1LtByEtg4HsA16Ao4vi/t4jrsMQYmyAbaBy5te5ACeTZac3LywCPKZ40OWgDvgHkEB4D/5Q+Bn9vhvYZQzh/3cZzgAUdLHQdSL/E965sagzIQZ607V0uxb6Nwzs2sCbQzOQ9QF5CYle6FzSGfKIh0fyY0uSULmyvqus6dj2I9JqfYn0/L8QW99q8EquHS9lhFrReLlVieYyPgAPQsnw4xQQmVLZbSgn+ndpQwtfClRCQ/345UAfaKiQrPiXn69j3JVcPsWl686Af3IITbr8y/v/aF8GOLX4xFE/HAAAAAElFTkSuQmCC");
+  background-repeat: no-repeat;
+  background-position: left 10px center;
+  background-size: 20px;
+  border-radius: 0 4px 4px 0;
+  margin-left: -3px;
+}
+
+.wind-button.active {
+  background: #fff;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAYCAYAAACbU/80AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAGAAAAAA915G0AAACrklEQVRIDc1WTWhTQRCe2ZfXRA30ILm0Iki1IoIGFEUUBA8iCO0thzZpTj1Ikyq99hKoeK35OYpikkJpDx60Vk8epBUvgj9gsAcvCmIDVqo2JtkdZ19MStr3UjR54kKyuzOz883uzH77EFxuiQSJ68X8BBCFCOEwErxCQXcq6ehtDY1u4lvgq7kFArq0DUfALZmOjroagBnPxZRSaQscQXH/CQh6GsEIHBCNiQsDUhSrucWvBhhBmYn2ouG5AIhVLUeimGsB9CTu7yakQ1YASLlyJvxaj6up4SdcB4t6TIRB1wLoB3+Zj/uzBkIhFnS/vZFytQZ2xfP7KkAHqunI0zq4lpVJFXj7exDwkWMA3vhsn4KKv76w7d4QiFIdkaSm+GT6tD8Bwv4WdMXyYUky1zZoCweI+KySjpy1rQEF8niLtW2rEGHRh75BDoI8dt5MNJJlkHu5fDqXAuKaB3wHBi5VkuHHGtwO+5/L0IjlBpgQrjApd3UIXfHW3hoEy4PnffPzoZBs5ReNsbsf2KC3ldHf6nShcY6HS5mR904+BOdllnPdMkqnxTvJOe1nmHMfHE3MOZ6uxQMH4w+9696ibUHuBLJVL0W3WPuxfgxA3eQATmo9M+Ekk9GNrbaWzk74pzJzPBvRayqpkQZ3+ONzgQ1VWmHG7+Zrt1TNRM/Z+bXlATtDJ5k5PnNCScrqnxmfOVW3+5YOrfJNW9ZzvoCOvNJ2ACB10dcagbxcH9d6/P3205dm+eas7bz3B7xvCsXSd/24kIIJpvEVvtIvFKhR/h6wds6F9nwTsnnk+Bg1m7WemWPZawpo2tYK4acBZrCcGSrY6dtPAXudDERSXGhJrvdGOiwwhDX++hlyAtc2HTkBC4z/zKvZ0yTpIpP+fn5qX3o83nsb06GPdf1/2f8CBEfns8DB3a8AAAAASUVORK5CYII=");
+  background-repeat: no-repeat;
+  background-position: left 10px center;
+  background-size: 20px;
+}
+</style>
