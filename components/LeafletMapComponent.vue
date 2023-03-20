@@ -93,7 +93,7 @@
 
     <select v-model="selectedMapId">
       <option value="0">--Выберите место--</option>
-      <option v-for="map in mapsList" v-bind:value="map.id">
+      <option v-for="map in mapsList" :key="map.id">
         {{ map.title }}
       </option>
     </select>
