@@ -97,7 +97,9 @@
         {{ map.title }}
       </option>
     </select>
-   
+   <hr/>
+   selectedMap
+   <hr/>
   </div>
 </template>
 
