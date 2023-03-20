@@ -98,7 +98,7 @@
       </option>
     </select>
    <hr/>
-   selectedMap
+   {{ selectedMap }}
    <hr/>
   </div>
 </template>
