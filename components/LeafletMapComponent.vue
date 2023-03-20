@@ -3,30 +3,17 @@
   <div class="map-component">
     <div id="map-wrap" style="height: 500px">
       <client-only>
-        <LMap
-          :zoom="selectedMap.zoom"
-          :center="selectedMap.center"
-          :options="{ zoomControl: false }"
-        >
-          <LTileLayer
-            :url="url"
-            :attribution="attribution"
-            :bounds="selectedMap.bounds"
-            :opacity="1"
-          />
+        <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" :options="{ zoomControl: false }">
+          <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0.1" />
 
-          <LImageOverlay
-            :url="'/images/svg/' + selectedMap.mapURL + '.svg'"
-            :bounds="selectedMap.bounds"
-            :opacity="1"
-          />
-          <!--
+          <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds" :opacity="1" />
+        <!--
             пока не показываем 
             <ChoroplethLayerComponent
                       v-if="selectedMapId === 1"
                       :bounds="bounds"
                     />
-          -->
+            -->
 
           <LControl position="topleft">
             <LeftConrolList :list="listData" />
@@ -34,16 +21,10 @@
 
           <LControl>
             <div class="map-buttons">
-              <button
-                :class="'forecasts-button ' + activeForecastsButton"
-                @click="setViewData('forecasts')"
-              >
+              <button :class="'forecasts-button ' + activeForecastsButton" @click="setViewData('forecasts')">
                 Прогноз
               </button>
-              <button
-                :class="'wind-button ' + activeWindButton"
-                @click="setViewData('wind')"
-              >
+              <button :class="'wind-button ' + activeWindButton" @click="setViewData('wind')">
                 Ветер
               </button>
             </div>
@@ -51,9 +32,7 @@
           <div v-if="citiesList.length">
             <div v-for="city in citiesList" :key="city.id">
               <div @click="changeBlock(city)">
-                <LMarker
-                  :lat-lng="[city.coords.latitude, city.coords.longitude]"
-                >
+                <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]">
                   <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
                     <InfoBlock :viewData="viewData" :city="city" />
                   </LIcon>
@@ -63,20 +42,14 @@
                         <div class="title">{{ city.title }}</div>
                         <div class="info">
                           <template>
-                            <InfoBlock
-                              :viewData="viewData"
-                              :city="city"
-                              :tooltip="'tooltip'"
-                            />
+                            <InfoBlock :viewData="viewData" :city="city" :tooltip="'tooltip'" />
                           </template>
                           <p class="min-max-info">
                             Min:
-                            <span class="blue-text"
-                              >{{ city.forecasts.min }}°
+                            <span class="blue-text">{{ city.forecasts.min }}°
                             </span>
                             Max:
-                            <span class="orange-text"
-                              >{{ city.forecasts.max }}°
+                            <span class="orange-text">{{ city.forecasts.max }}°
                             </span>
                           </p>
                         </div>
@@ -93,13 +66,12 @@
 
     <select v-model="selectedMapId">
       <option value="0">--Выберите место--</option>
-      <option v-for="map in mapsList" :key="map.id">
+      <option v-for="map in mapsList" :key="map.id" v-bind:value="map.id">
         {{ map.title }}
       </option>
     </select>
-   <hr/>
-   {{ selectedMap }}
-   <hr/>
+
+    <hr />
   </div>
 </template>
 
@@ -280,7 +252,6 @@ export default {
   },
   watch: {
     selectedMapId() {
-      console.log("this.selectedMapId", this.selectedMapId);
       this.setMap(this.selectedMapId);
     },
   },
@@ -300,6 +271,7 @@ export default {
   width: 100%;
   height: 100%;
 }
+
 .black-weight-text {
   font-size: 16px;
   color: #333333;
@@ -314,24 +286,29 @@ export default {
   padding: 5px 70px;
   border-radius: 3px;
 }
+
 .title {
   font-size: 20px;
   font-weight: 700;
   color: #036ba1;
   padding: 5px;
 }
+
 .min-max-info {
   padding: 5px 0 0 0;
   margin: 0;
   font-size: 12px;
   font-weight: 500;
 }
+
 .blue-text {
   color: #0381a1;
 }
+
 .orange-text {
   color: #f47a20;
 }
+
 .map-buttons button {
   width: 16px;
   height: 11px;
@@ -343,6 +320,7 @@ export default {
   font-weight: 600;
   font-size: 14px;
 }
+
 .map-buttons button.active {
   color: #036ba1;
 }
@@ -355,6 +333,7 @@ export default {
   background-size: 25px;
   border-radius: 4px 0 0 4px;
 }
+
 .forecasts-button.active {
   background: #fff;
   background-image: url("data:image/png;base64,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");
@@ -362,6 +341,7 @@ export default {
   background-position: left 10px center;
   background-size: 25px;
 }
+
 .wind-button {
   background: #036ba1;
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAYCAYAAACbU/80AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAGAAAAAA915G0AAABv0lEQVRIDc2WzytEURTHvUmjZKVsJCUbFCkiCwsbG6Gs2SgLZWFhZ6lsTVn6B9QslDDNGrOwsyJrs2AzNBaimetzZu7U6Xn3WrgvTn3n/Lrz/Z477773pq0tZTPGZMAOuAGv4BKspyzbpEdIxAsgyY5SHwLVLaVcIy6rXMLFVIdA4N4KvuBHRQw/Bz5tvZjaAAh0Atm12KEWIj9tVI15yuhG4PgDvmfLee7grjvqYcrssg/MajZbe7O/QCHSTR2zYJC8S9d+GYvWMNgDwi220XSxT8RX7YRpuhLkkesMjMdmCp0WIFyOosi0O5hz1LtByEtg4HsA16Ao4vi/t4jrsMQYmyAbaBy5te5ACeTZac3LywCPKZ40OWgDvgHkEB4D/5Q+Bn9vhvYZQzh/3cZzgAUdLHQdSL/E965sagzIQZ607V0uxb6Nwzs2sCbQzOQ9QF5CYle6FzSGfKIh0fyY0uSULmyvqus6dj2I9JqfYn0/L8QW99q8EquHS9lhFrReLlVieYyPgAPQsnw4xQQmVLZbSgn+ndpQwtfClRCQ/345UAfaKiQrPiXn69j3JVcPsWl686Af3IITbr8y/v/aF8GOLX4xFE/HAAAAAElFTkSuQmCC");
