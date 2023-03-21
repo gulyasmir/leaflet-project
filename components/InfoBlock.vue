@@ -54,7 +54,7 @@
           this.viewData === 'wind'
             ? 'transform: rotate(' +
               city.wind.iconRotate +
-              'deg); width:30px; height:30px'
+              'deg); width:16px; height:16px'
             : ''
         "
       />
@@ -82,7 +82,7 @@ export default {
         case "forecasts":
           return "images/forecasts-icons/" + forecastsIcon;
         case "wind":
-          return "images/wind.svg";
+          return "images/wind-icon/wind.svg";
     
         default:
           return "images/forecasts-icons/" + forecastsIcon;
