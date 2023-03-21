@@ -34,10 +34,10 @@ export default {
         if (Data.getHours() < 6 && itemTime === 4) {
           className = "time now";
         }
-        if (Data.getHours() >= 6 && Data.getHours() < 12 && itemTime === 2) {
+        if (Data.getHours() >= 6 && Data.getHours() < 12 && itemTime === 3) {
           className = "time now";
         }
-        if (Data.getHours() >= 12 && Data.getHours() < 18 && itemTime === 1) {
+        if (Data.getHours() >= 12 && Data.getHours() < 18 && itemTime === 2) {
           className = "time now";
         }
 

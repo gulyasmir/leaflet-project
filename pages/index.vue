@@ -113,7 +113,7 @@ methods:{
       'Content-Type': 'application/json'
     },
     data: {
-  "sid": ["RU80-980401-0000", "RU98-998401-0000"],
+  "sid": ["RU11-022867-0000"],
   "dst": ["FRC-WTH-DATA-XXXXXXXXXXX"]
 }
 })

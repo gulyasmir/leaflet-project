@@ -76,7 +76,7 @@
 </template>
 
 <script>
-////[55.4424, 37.3636]"
+
 import {
   LMap,
   LTileLayer,
@@ -137,18 +137,13 @@ export default {
       },
 
       selectedMapId: 1,
-      center: [63.529039, 91.904869],
+      center: [63.529039, 91.904869], // центр в Москве [55.4424, 37.3636]
       zoom: 3,
       bounds: [
         [82.265536, 17.356231],
         [34.072684, 174.990258],
       ],
-      boundsPNG: [
-        //"urlImageOverlay.png",
-        [79.866595, 15.846277],
-        [33.321477, 194.317789],
-      ],
-
+      
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -169,7 +164,7 @@ export default {
             },
             {
               id: 2,
-              title: "Полдень",
+              title: "День",
             },
             {
               id: 3,
@@ -192,7 +187,7 @@ export default {
             },
             {
               id: 2,
-              title: "Полдень",
+              title: "День",
             },
             {
               id: 3,
@@ -204,19 +199,11 @@ export default {
             },
           ],
         },
-      ],
-      // urlImageOverlay: "/images/urlImageOverlay.png",
-      // crs: L.CRS.Simple,
-      // //bounds: [66.058, 189.459], // json.bbox,
-      // geojson: { type: "FeatureCollection", features: json },
+      ]
+      
     };
   },
-  mounted() {
-    this.$nextTick(() => {
-      // this.$refs.myMap.mapObject.ANY_LEAFLET_MAP_METHOD();
-    });
-    // L.marker([51.5, -0.09], {icon: greenIcon}).addTo(map);
-  },
+ 
   methods: {
     setMap(mapId) {
       this.selectedMap = this.mapsList.find(function (elem) {
