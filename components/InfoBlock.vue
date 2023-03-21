@@ -3,7 +3,7 @@
     <div v-if="tooltip">
       <img
         :src="setIcon(city.forecasts.forecastsIcon)"
-        class="info-block__icon"
+        class="info-block__icon tooltip "
         :style="
           this.viewData === 'wind'
             ? 'transform: rotate(' +
@@ -48,7 +48,7 @@
       </div>
 
       <img
-        :src="setIcon(city.forecasts.forecastsIcon, city.uvIcon)"
+        :src="setIcon(city.forecasts.forecastsIcon)"
         class="info-block__icon"
         :style="
           this.viewData === 'wind'
@@ -80,12 +80,12 @@ export default {
     setIcon(forecastsIcon) {
       switch (this.viewData) {
         case "forecasts":
-          return "images/" + forecastsIcon;
+          return "images/forecasts-icons/" + forecastsIcon;
         case "wind":
           return "images/wind.svg";
     
         default:
-          return "images/" + forecastsIcon;
+          return "images/forecasts-icons/" + forecastsIcon;
       }
     },
   },
@@ -98,10 +98,20 @@ export default {
     padding: 0;
     margin: 0;
 }
+/*  размер иконок о погоде */
+.info-block__icon { 
+  width: 20px;
+  height: 20px;
+}
+.info-block__icon.tooltip { 
+  width: 35px;
+  height: 35px;
+}
+
 .black-weight-text {
-  font-size: 16px;
+  font-size: 12px;
   color: #000;
-  font-weight: 700;
+  font-weight: 500;
   margin: 0;
   padding: 0;
 }

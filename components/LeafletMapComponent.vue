@@ -1,24 +1,26 @@
 <!-- Please remove this file from your project -->
 <template>
   <div class="map-component">
+    <div class="control-buttons">
+      <button id="today" class="day-button active" @click="setDay('today')">
+        Сегодня
+      </button>
+      <button id="tomorrow" class="day-button" @click="setDay('tomorrow')">
+        Завтра
+      </button>
+      <button id="week" class="day-button" @click="setDay('week')">
+        На неделю
+      </button>
+    </div>
     <div id="map-wrap" style="height: 500px">
       <client-only>
         <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" :options="{ zoomControl: false }">
           <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0.1" />
 
           <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds" :opacity="1" />
-        <!--
-            пока не показываем 
-            <ChoroplethLayerComponent
-                      v-if="selectedMapId === 1"
-                      :bounds="bounds"
-                    />
-            -->
-
           <LControl position="topleft">
-            <LeftConrolList :list="listData" />
+            <LeftConrolList :list="listData" @selectControlButtons="onSelectControlButtons" />
           </LControl>
-
           <LControl>
             <div class="map-buttons">
               <button :class="'forecasts-button ' + activeForecastsButton" @click="setViewData('forecasts')">
@@ -30,11 +32,11 @@
             </div>
           </LControl>
           <div v-if="citiesList.length">
-            <div v-for="city in citiesList" :key="city.id">
-              <div @click="changeBlock(city)">
+            <div v-for="city in citiesList1" :key="city.id">
+              <div @click="clickBlock(city)">
                 <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]">
                   <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
-                    <InfoBlock :viewData="viewData" :city="city" />
+                    <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day"  />
                   </LIcon>
                   <LTooltip>
                     <template>
@@ -42,14 +44,14 @@
                         <div class="title">{{ city.title }}</div>
                         <div class="info">
                           <template>
-                            <InfoBlock :viewData="viewData" :city="city" :tooltip="'tooltip'" />
+                            <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" :tooltip="'tooltip'" />
                           </template>
                           <p class="min-max-info">
                             Min:
-                            <span class="blue-text">{{ city.forecasts.min }}°
+                            <span class="blue-text">{{ city.info[dayIndex].day.forecasts.min }}°
                             </span>
                             Max:
-                            <span class="orange-text">{{ city.forecasts.max }}°
+                            <span class="orange-text">{{ city.info[dayIndex].day.forecasts.max }}°
                             </span>
                           </p>
                         </div>
@@ -63,15 +65,12 @@
         </LMap>
       </client-only>
     </div>
-
     <select v-model="selectedMapId">
       <option value="0">--Выберите место--</option>
       <option v-for="map in mapsList" :key="map.id" v-bind:value="map.id">
         {{ map.title }}
       </option>
     </select>
-
-    <hr />
   </div>
 </template>
 
@@ -94,7 +93,7 @@ import LeftConrolList from "./LeftConrolList";
 import ChoroplethLayerComponent from "./ChoroplethLayerComponent";
 
 export default {
-  name: "ChoroplethLayer",
+  name: "LeafletMapComponent",
   components: {
     LMap,
     LTileLayer,
@@ -114,6 +113,10 @@ export default {
   },
   props: {
     citiesList: {
+      type: Array,
+      defautl: [],
+    },
+    citiesList1: {
       type: Array,
       defautl: [],
     },
@@ -143,7 +146,7 @@ export default {
         [82.265536, 17.356231],
         [34.072684, 174.990258],
       ],
-      
+
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -152,75 +155,76 @@ export default {
       viewData: "forecasts",
       activeForecastsButton: "active",
       activeWindButton: "",
+      dayInfo: 'today',
+      timeInfo: 'day',
+      dayIndex: 0,
       listData: [
         {
           id: 1,
-          day: "Вторник",
-          date: "21",
+          day: "Сегодня",
+          dayInfo: "today",
           listTime: [
             {
               id: 1,
-              title: "Утро",
+              title: "День",
+              timeInfo: 'day'
             },
             {
               id: 2,
-              title: "День",
-            },
-            {
-              id: 3,
-              title: "Вечер",
-            },
-            {
-              id: 4,
               title: "Ночь",
-            },
-          ],
+              timeInfo: 'night'
+            }
+          ]
         },
         {
           id: 2,
-          day: "Среда",
-          date: "22",
+          day: "Завтра",
+          dayInfo: "tomorrow",
           listTime: [
             {
               id: 1,
-              title: "Утро",
+              title: "День",
+              timeInfo: 'day'
             },
             {
               id: 2,
-              title: "День",
-            },
-            {
-              id: 3,
-              title: "Вечер",
-            },
-            {
-              id: 4,
               title: "Ночь",
-            },
-          ],
+              timeInfo: 'night'
+            }
+          ]
         },
       ]
-      
+
     };
   },
- 
+
   methods: {
+    setDay(day) {
+      let dayButtons = document.getElementsByClassName('day-button')
+      Array.from(dayButtons).forEach(element => {
+        element.classList.remove('active')
+      })
+      document.getElementById(day).classList.add('active')
+      if (day === 'week') {
+        // меняется listData
+      } else {
+        let data = {
+        dayInfo: day,
+        timeInfo: 'day'
+      }
+      this.onSelectControlButtons(data)
+      }
+    },
+
+    onSelectControlButtons(data) {
+      this.dayInfo = data.dayInfo
+      this.timeInfo = data.timeInfo
+      this.dayIndex = this.dayInfo === 'today' ? 0 : 1
+    },
     setMap(mapId) {
       this.selectedMap = this.mapsList.find(function (elem) {
         return elem.id === mapId;
       });
-    },
-    setIcon(forecastsIcon, uvIcon) {
-      switch (this.viewData) {
-        case "forecasts":
-          return "images/" + forecastsIcon;
-        case "wind":
-          return "images/wind.svg";
-        case "uv":
-          return "images/" + uvIcon;
-        default:
-          return "images/" + forecastsIcon;
-      }
     },
     setViewData(type) {
       this.viewData = type;
@@ -232,9 +236,9 @@ export default {
         ? "transform: rotate(" + iconRotate + "deg); width:30px; height:30px"
         : "";
     },
-    changeBlock(city) {
-      // вставка вместо карты блока  информации о погоде в этом регионе
-      console.log("changeBlock", city);
+    clickBlock(city) {
+      // если понадобиться повесить сюда событие
+      console.log("clickBlock", city);
     },
   },
   watch: {
@@ -260,7 +264,7 @@ export default {
 }
 
 .black-weight-text {
-  font-size: 16px;
+  font-size: 12px;
   color: #333333;
   font-weight: 700;
   margin: 0;
@@ -294,6 +298,10 @@ export default {
 
 .orange-text {
   color: #f47a20;
+}
+
+button {
+  cursor: pointer;
 }
 
 .map-buttons button {
@@ -345,5 +353,31 @@ export default {
   background-repeat: no-repeat;
   background-position: left 10px center;
   background-size: 20px;
+}
+
+.control-buttons {
+  width: 100%;
+}
+
+.control-buttons button {
+  background: #fff;
+  border-radius: 4px 0 0 4px;
+  color: #036ba1;
+  width: 30%;
+  padding: 5px 10px;
+  border: none;
+  height: 30px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.control-buttons button:hover {
+  background: #fff;
+  color: #db0084;
+}
+
+.control-buttons button.active {
+  background: #db0084;
+  color: #fff;
 }
 </style>
