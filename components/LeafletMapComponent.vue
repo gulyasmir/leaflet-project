@@ -22,12 +22,11 @@
     <div id="map-wrap" style="height: 500px">
       
       <client-only>
-        <!-- :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom:false, dragging:false }-->
         <LMap
           :zoom="selectedMap.zoom"
           :center="selectedMap.center"
           @click="getClickCoords($event)"
-          :options="{}"
+          :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom:false, dragging:false }"
         >
           <LTileLayer
             :url="url"
