@@ -20,7 +20,7 @@
           <LControl position="topleft">
             <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
               @selectControlButtons="onSelectControlButtons" />
-            <LeftControlWeekList v-show="this.dayInfo === 'week'" @selectControlButtons="onSelectDateButtons" />
+            <LeftControlWeekList v-show="this.dayInfo === 'week'" @selectControlWeekButtons="onSelectControlWeekButtons" />
           </LControl>
           <LControl>
             <div class="map-buttons">
@@ -219,7 +219,10 @@ export default {
       this.timeInfo = data.timeInfo
       this.dayIndex = this.dayInfo === 'today' ? 0 : 1
     },
-    onSelectDateButtons(data) {
+    onSelectControlWeekButtons(data) {
+      this.dayIndex = data.dayIndex
+      this.timeInfo = data.timeInfo
+     
       console.log('onSelectDateButtons data', data)
     },
     setMap(mapId) {

@@ -7,7 +7,7 @@
 
         <ul class="time-list panel">
           <li v-for="itemTime in itemDay.listTime" :key="itemTime.id">
-            <span @click="selectTime(itemDay.dayInfo, itemTime.timeInfo)"
+            <span @click="selectTime(itemDay.id, itemTime.timeInfo)"
               class="time">
               {{ itemTime.title }}
             </span>
@@ -22,14 +22,17 @@ export default {
   name: "LeftConrolWeekList",
 
   mounted() {
-   
+   /* document.addEventListener('click',el => {
+      console.log(el.target)
+      el.target.classList.add('active')
+    } )*/
     //
     //  this.openTimeList()
   },
   methods: {
-    selectTime(dayInfo, timeInfo) {
-      this.$emit('selectControlButtons', {
-        dayInfo: dayInfo,
+    selectTime(dayIndex, timeInfo) {
+      this.$emit('selectControlWeekButtons', {
+        dayIndex: dayIndex,
         timeInfo: timeInfo
       })
     },
@@ -100,8 +103,6 @@ export default {
          ]
          })
        }
-
-      console.log(array)
       return array
     }
   }
@@ -146,7 +147,10 @@ export default {
   cursor: pointer;
   transition: 0.4s;
 }
+.active {
+  color: #db0084;
 
+}
 .panel {
   display: none;
   overflow: hidden;
