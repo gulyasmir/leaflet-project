@@ -14,7 +14,7 @@
     </div>
     <div id="map-wrap" style="height: 500px">
       <client-only>
-        <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" :options="{ zoomControl: false }">
+        <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" :options="{ zoomControl: false, scrollWheelZoom:false, dragging:false }" >
           <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0.1" />
           <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds" :opacity="1" />
           <LControl position="topleft">
@@ -197,6 +197,9 @@ export default {
   },
 
   methods: {
+    getClickCoords(coords) {
+console.log('coords', coords)
+    },
     setDay(day) {
       let dayButtons = document.getElementsByClassName('day-button')
       Array.from(dayButtons).forEach(element => {
@@ -262,6 +265,9 @@ export default {
 </script>
 
 <style>
+.leaflet-control-attribution {
+  opacity: 0;
+}
 .map-component {
   width: 100%;
   height: 100%;

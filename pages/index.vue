@@ -6,7 +6,7 @@
 
 <script>
 import forecastStationsJson from '../static/json/forecast_stations.json'
-import mapsJson from '../static/json/maps.json'
+import mapsJson from '../static/json/maps-full.json'
 export default {
   name: "IndexPage",
   
