@@ -1,6 +1,13 @@
 <!-- Please remove this file from your project -->
 <template>
   <div class="map-component">
+    <div v-if="reload" class="full">
+      <div class="loader-ring">
+        <div class="loader-ring-light"></div>
+        <div class="loader-ring-track"></div>
+      </div>
+    </div>
+    <div v-else class="full">
     <div class="control-buttons">
       <button id="today" class="day-button active" @click="setDay('today')">
         Сегодня
@@ -13,21 +20,49 @@
       </button>
     </div>
     <div id="map-wrap" style="height: 500px">
-      <client-only> <!-- :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom:false, dragging:false }-->
-        <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" :options="{zoomControl: false, touchZoom: false,doubleClickZoom:false, scrollWheelZoom:false, dragging:false }" >
-          <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0.1" />
-          <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds" :opacity="1" />
+      
+      <client-only>
+        <!-- :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom:false, dragging:false }-->
+        <LMap
+          :zoom="selectedMap.zoom"
+          :center="selectedMap.center"
+          @click="getClickCoords($event)"
+          :options="{}"
+        >
+          <LTileLayer
+            :url="url"
+            :attribution="attribution"
+            :bounds="selectedMap.bounds"
+            :opacity="1"
+          />
+          <LImageOverlay
+            :url="'/images/svg/' + selectedMap.mapURL + '.svg'"
+            :bounds="selectedMap.bounds"
+            :opacity="0.7"
+          />
           <LControl position="topleft">
-            <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
-              @selectControlButtons="onSelectControlButtons" />
-            <LeftControlWeekList v-show="this.dayInfo === 'week'" @selectControlWeekButtons="onSelectControlWeekButtons" />
+            <LeftControlList
+              v-show="this.dayInfo !== 'week'"
+              :list="listData"
+              @selectControlButtons="onSelectControlButtons"
+            />
+            <LeftControlWeekList
+              v-show="this.dayInfo === 'week'"
+              @selectControlWeekButtons="onSelectControlWeekButtons"
+            />
           </LControl>
           <LControl>
             <div class="map-buttons">
-              <button :class="'forecasts-button ' + activeForecastsButton" @click="setViewData('forecasts')">
+              <button
+                :class="'forecasts-button ' + activeForecastsButton"
+                @click="setViewData('forecasts')"
+              >
                 Прогноз
               </button>
-              <button :class="'wind-button ' + activeWindButton" @click="setViewData('wind')">
+              <button
+                :class="'wind-button ' + activeWindButton"
+                @click="setViewData('wind')"
+              >
                 Ветер
               </button>
             </div>
@@ -35,9 +70,14 @@
           <div v-if="citiesList.length">
             <div v-for="city in citiesList" :key="city.id">
               <div @click="clickBlock(city)">
-                <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]">
+                <LMarker
+                  :lat-lng="[city.coords.latitude, city.coords.longitude]"
+                >
                   <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
-                    <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" />
+                    <InfoBlock
+                      :viewData="viewData"
+                      :city="city.info[dayIndex].day"
+                    />
                   </LIcon>
                   <LTooltip>
                     <template>
@@ -45,14 +85,20 @@
                         <div class="title">{{ city.title }}</div>
                         <div class="info">
                           <template>
-                            <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" :tooltip="'tooltip'" />
+                            <InfoBlock
+                              :viewData="viewData"
+                              :city="city.info[dayIndex].day"
+                              :tooltip="'tooltip'"
+                            />
                           </template>
                           <p class="min-max-info">
                             Min:
-                            <span class="blue-text">{{ city.info[dayIndex].day.forecasts.min }}°
+                            <span class="blue-text"
+                              >{{ city.info[dayIndex].day.forecasts.min }}°
                             </span>
                             Max:
-                            <span class="orange-text">{{ city.info[dayIndex].day.forecasts.max }}°
+                            <span class="orange-text"
+                              >{{ city.info[dayIndex].day.forecasts.max }}°
                             </span>
                           </p>
                         </div>
@@ -68,15 +114,15 @@
     </div>
     <select v-model="selectedMapId">
       <option value="0">--Выберите место--</option>
-      <option v-for="map in mapsList" :key="map.id" v-bind:value="map.id">
+      <option v-for="map in mapsList" v-bind:value="map.id">
         {{ map.title }}
       </option>
     </select>
   </div>
+</div>
 </template>
 
 <script>
-
 import {
   LMap,
   LTileLayer,
@@ -111,7 +157,7 @@ export default {
     ChoroplethLayer,
     InfoBlock,
     LeftControlList,
-    LeftControlWeekList
+    LeftControlWeekList,
   },
   props: {
     citiesList: {
@@ -136,7 +182,7 @@ export default {
         center: [63.529039, 91.904869],
         zoom: 3,
       },
-
+      reload: false,
       selectedMapId: 1,
       center: [63.529039, 91.904869], // центр в Москве [55.4424, 37.3636]
       zoom: 3,
@@ -153,8 +199,8 @@ export default {
       viewData: "forecasts",
       activeForecastsButton: "active",
       activeWindButton: "",
-      dayInfo: 'today',
-      timeInfo: 'day',
+      dayInfo: "today",
+      timeInfo: "day",
       dayIndex: 0,
       listData: [
         {
@@ -165,14 +211,14 @@ export default {
             {
               id: 1,
               title: "День",
-              timeInfo: 'day'
+              timeInfo: "day",
             },
             {
               id: 2,
               title: "Ночь",
-              timeInfo: 'night'
-            }
-          ]
+              timeInfo: "night",
+            },
+          ],
         },
         {
           id: 2,
@@ -182,51 +228,50 @@ export default {
             {
               id: 1,
               title: "День",
-              timeInfo: 'day'
+              timeInfo: "day",
             },
             {
               id: 2,
               title: "Ночь",
-              timeInfo: 'night'
-            }
-          ]
+              timeInfo: "night",
+            },
+          ],
         },
-      ]
-
+      ],
     };
   },
 
   methods: {
-    getClickCoords(coords) {
-console.log('coords', coords)
+    getClickCoords(eventData) {
+      console.log("eventData", eventData);
     },
     setDay(day) {
-      let dayButtons = document.getElementsByClassName('day-button')
-      Array.from(dayButtons).forEach(element => {
-        element.classList.remove('active')
-      })
-      document.getElementById(day).classList.add('active')
-      if (day !== 'week') {
+      let dayButtons = document.getElementsByClassName("day-button");
+      Array.from(dayButtons).forEach((element) => {
+        element.classList.remove("active");
+      });
+      document.getElementById(day).classList.add("active");
+      if (day !== "week") {
         let data = {
           dayInfo: day,
-          timeInfo: 'day'
-        }
-        this.onSelectControlButtons(data)
+          timeInfo: "day",
+        };
+        this.onSelectControlButtons(data);
       } else {
-        this.dayInfo = day
+        this.dayInfo = day;
       }
     },
 
     onSelectControlButtons(data) {
-      this.dayInfo = data.dayInfo
-      this.timeInfo = data.timeInfo
-      this.dayIndex = this.dayInfo === 'today' ? 0 : 1
+      this.dayInfo = data.dayInfo;
+      this.timeInfo = data.timeInfo;
+      this.dayIndex = this.dayInfo === "today" ? 0 : 1;
     },
     onSelectControlWeekButtons(data) {
-      this.dayIndex = data.dayIndex
-      this.timeInfo = data.timeInfo
-     
-      console.log('onSelectDateButtons data', data)
+      this.dayIndex = data.dayIndex;
+      this.timeInfo = data.timeInfo;
+
+      console.log("onSelectDateButtons data", data);
     },
     setMap(mapId) {
       this.selectedMap = this.mapsList.find(function (elem) {
@@ -247,11 +292,17 @@ console.log('coords', coords)
       // если понадобиться повесить сюда событие
       console.log("clickBlock", city);
     },
+    setNewMap() {
+      this.setMap(this.selectedMapId)
+      this.reload = false
+    }
   },
   watch: {
     selectedMapId() {
-      this.setMap(this.selectedMapId);
-    },
+      this.reload = true
+      setTimeout(this.setNewMap, 500)
+
+    }
   },
   computed: {
     dynamicSize() {
@@ -265,12 +316,57 @@ console.log('coords', coords)
 </script>
 
 <style>
+@keyframes rotate-360 {
+  from {
+    -webkit-transform: rotate(0);
+    -ms-transform: rotate(0);
+    -o-transform: rotate(0);
+    transform: rotate(0);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.loader-ring-light {
+  top: 50%;
+  left: 63%;
+  position: absolute;
+  margin: -100px 0 0 -100px;
+  width: 200px;
+  height: 200px;
+  border-radius: 200px;
+  -webkit-box-shadow: 0 5px 0 #1a7ac7 inset;
+  box-shadow: 0 5px 0 #1a7ac7 inset;
+  animation: rotate-360 2s linear infinite;
+}
+#atmogramme .loader-ring {
+  opacity: 0;
+  transition: 0.5s all;
+}
+.loader-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  z-index: 555;
+  pointer-events: none;
+}
+.full {
+  height: 100%;
+  width: 100%;
+}
 .leaflet-control-attribution {
   opacity: 0;
 }
 .map-component {
   width: 100%;
   height: 100%;
+
 }
 
 .black-weight-text {
