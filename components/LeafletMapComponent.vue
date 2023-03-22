@@ -32,12 +32,12 @@
             :url="url"
             :attribution="attribution"
             :bounds="selectedMap.bounds"
-            :opacity="1"
+            :opacity="0.1"
           />
           <LImageOverlay
             :url="'/images/svg/' + selectedMap.mapURL + '.svg'"
             :bounds="selectedMap.bounds"
-            :opacity="0.7"
+            :opacity="1"
           />
           <LControl position="topleft">
             <LeftControlList
