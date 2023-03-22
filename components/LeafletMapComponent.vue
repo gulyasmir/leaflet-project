@@ -270,8 +270,6 @@ export default {
     onSelectControlWeekButtons(data) {
       this.dayIndex = data.dayIndex;
       this.timeInfo = data.timeInfo;
-
-      console.log("onSelectDateButtons data", data);
     },
     setMap(mapId) {
       this.selectedMap = this.mapsList.find(function (elem) {
