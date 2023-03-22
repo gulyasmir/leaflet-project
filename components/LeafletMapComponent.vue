@@ -207,6 +207,42 @@ export default {
       document.getElementById(day).classList.add('active')
       if (day === 'week') {
         // меняется listData
+        listData = [
+        {
+          id: 1,
+          day: "Сегодня",
+          dayInfo: "today",
+          listTime: [
+            {
+              id: 1,
+              title: "День",
+              timeInfo: 'day'
+            },
+            {
+              id: 2,
+              title: "Ночь",
+              timeInfo: 'night'
+            }
+          ]
+        },
+        {
+          id: 2,
+          day: "Завтра",
+          dayInfo: "tomorrow",
+          listTime: [
+            {
+              id: 1,
+              title: "День",
+              timeInfo: 'day'
+            },
+            {
+              id: 2,
+              title: "Ночь",
+              timeInfo: 'night'
+            }
+          ]
+        },
+      ]
       } else {
         let data = {
         dayInfo: day,

@@ -1,5 +1,6 @@
 <template>
   <div class="map">
+    <string name="wi_wu_mostlycloudy">&#xf002;</string>
     <LeafletMapComponent :citiesList="cities1"  :citiesList1="cities"  :mapsList="maps" />
   </div>
 </template>
@@ -106,25 +107,27 @@ export default {
 
     setForecastsDayIcon(code) {
       let forecastsIcon = ''
-      if (code == 1) forecastsIcon = '1.svg'          //1. ясно
-      else if (code <= 3) forecastsIcon = '2.svg'            //2. переменная без осадков
-      else if (code == 4) forecastsIcon = '3.svg'            //3. облачно без осадков
-      else if (code > 4 && code < 25) forecastsIcon = '4.svg'  //4. переменная, снег
-      else if (code > 24 && code < 41) forecastsIcon = '5.svg' //5. облачно, снег
-      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = '6.svg' //6. переменная, дождь
-      else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = '7.svg' //7. облачно, дождь
+      if (code == 1) forecastsIcon = 'sun-sun.svg'          //1. ясно
+      else if (code <= 3) forecastsIcon = 'sun.svg'            //2. переменная без осадков
+      else if (code == 4) forecastsIcon = 'sun-cloud.svg'            //3. облачно без осадков
+      else if (code > 4 && code < 25) forecastsIcon = 'cloud.svg'  //4. переменная, снег
+      else if (code > 24 && code < 41) forecastsIcon = 'sun-rain.svg' //5. облачно, снег
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain.svg' //6. переменная, дождь
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain-rain.svg' //6. переменная, дождь
+      else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = 'storm.svg' //7. облачно, дождь
 
       return forecastsIcon
     },
     setForecastsNightIcon(code) {
       let forecastsIcon = ''
-      if (code == 1) forecastsIcon = '10.svg'          //1. ясно
-      else if (code <= 3) forecastsIcon = '20.svg'            //2. переменная без осадков
-      else if (code == 4) forecastsIcon = '30.svg'            //3. облачно без осадков
-      else if (code > 4 && code < 25) forecastsIcon = '40.svg'  //4. переменная, снег
-      else if (code > 24 && code < 41) forecastsIcon = '50.svg' //5. облачно, снег
-      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = '60.svg' //6. переменная, дождь
-      else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = '70.svg' //7. облачно, дождь
+      if (code == 1) forecastsIcon = 'moon-moon.svg'          //1. ясно
+      else if (code <= 3) forecastsIcon = 'moon.svg'            //2. переменная без осадков
+      else if (code == 4) forecastsIcon = 'moon-cloud.svg'            //3. облачно без осадков
+      else if (code > 4 && code < 25) forecastsIcon = 'cloud.svg'  //4. переменная, снег
+      else if (code > 24 && code < 41) forecastsIcon = 'moon-rain.svg' //5. облачно, снег
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain.svg' //6. переменная, дождь
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain-rain.svg' //6. переменная, дождь
+      else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = 'storm.svg' //7. облачно, дождь
 
       return forecastsIcon
     },

@@ -100,8 +100,7 @@ export default {
 }
 /*  размер иконок о погоде */
 .info-block__icon { 
-  width: 20px;
-  height: 20px;
+ 
 }
 .info-block__icon.tooltip { 
   width: 35px;
@@ -109,9 +108,9 @@ export default {
 }
 
 .black-weight-text {
-  font-size: 12px;
+  font-size: 13px;
   color: #000;
-  font-weight: 500;
+  font-weight: 600;
   margin: 0;
   padding: 0;
 }
