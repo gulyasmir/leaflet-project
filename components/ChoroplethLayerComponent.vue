@@ -1,3 +1,5 @@
+<!--   Выделение областей при наведении мышкой -->
+
 <template>
   <ChoroplethLayer
     :data="pyDepartmentsData"

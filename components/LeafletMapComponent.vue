@@ -16,10 +16,11 @@
       <client-only>
         <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" :options="{ zoomControl: false }">
           <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0.1" />
-
           <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds" :opacity="1" />
           <LControl position="topleft">
-            <LeftConrolList :list="listData" @selectControlButtons="onSelectControlButtons" />
+            <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
+              @selectControlButtons="onSelectControlButtons" />
+            <LeftControlWeekList v-show="this.dayInfo === 'week'" @selectControlButtons="onSelectDateButtons" />
           </LControl>
           <LControl>
             <div class="map-buttons">
@@ -32,11 +33,11 @@
             </div>
           </LControl>
           <div v-if="citiesList.length">
-            <div v-for="city in citiesList1" :key="city.id">
+            <div v-for="city in citiesList" :key="city.id">
               <div @click="clickBlock(city)">
                 <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]">
                   <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
-                    <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day"  />
+                    <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" />
                   </LIcon>
                   <LTooltip>
                     <template>
@@ -89,7 +90,8 @@ import {
 import { InfoControl, ReferenceChart, ChoroplethLayer } from "vue-choropleth";
 import "leaflet/dist/leaflet.css";
 import InfoBlock from "./InfoBlock";
-import LeftConrolList from "./LeftConrolList";
+import LeftControlList from "./LeftControlList";
+import LeftControlWeekList from "./LeftControlWeekList";
 import ChoroplethLayerComponent from "./ChoroplethLayerComponent";
 
 export default {
@@ -104,19 +106,15 @@ export default {
     LControl,
     LGeoJson,
     ChoroplethLayerComponent,
-
     InfoControl,
     ReferenceChart,
     ChoroplethLayer,
     InfoBlock,
-    LeftConrolList,
+    LeftControlList,
+    LeftControlWeekList
   },
   props: {
     citiesList: {
-      type: Array,
-      defautl: [],
-    },
-    citiesList1: {
       type: Array,
       defautl: [],
     },
@@ -205,50 +203,14 @@ export default {
         element.classList.remove('active')
       })
       document.getElementById(day).classList.add('active')
-      if (day === 'week') {
-        // меняется listData
-        listData = [
-        {
-          id: 1,
-          day: "Сегодня",
-          dayInfo: "today",
-          listTime: [
-            {
-              id: 1,
-              title: "День",
-              timeInfo: 'day'
-            },
-            {
-              id: 2,
-              title: "Ночь",
-              timeInfo: 'night'
-            }
-          ]
-        },
-        {
-          id: 2,
-          day: "Завтра",
-          dayInfo: "tomorrow",
-          listTime: [
-            {
-              id: 1,
-              title: "День",
-              timeInfo: 'day'
-            },
-            {
-              id: 2,
-              title: "Ночь",
-              timeInfo: 'night'
-            }
-          ]
-        },
-      ]
-      } else {
+      if (day !== 'week') {
         let data = {
-        dayInfo: day,
-        timeInfo: 'day'
-      }
-      this.onSelectControlButtons(data)
+          dayInfo: day,
+          timeInfo: 'day'
+        }
+        this.onSelectControlButtons(data)
+      } else {
+        this.dayInfo = day
       }
     },
 
@@ -256,6 +218,9 @@ export default {
       this.dayInfo = data.dayInfo
       this.timeInfo = data.timeInfo
       this.dayIndex = this.dayInfo === 'today' ? 0 : 1
+    },
+    onSelectDateButtons(data) {
+      console.log('onSelectDateButtons data', data)
     },
     setMap(mapId) {
       this.selectedMap = this.mapsList.find(function (elem) {

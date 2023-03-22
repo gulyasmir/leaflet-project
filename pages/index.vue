@@ -1,7 +1,6 @@
 <template>
   <div class="map">
-    <string name="wi_wu_mostlycloudy">&#xf002;</string>
-    <LeafletMapComponent :citiesList="cities1"  :citiesList1="cities"  :mapsList="maps" />
+    <LeafletMapComponent :citiesList="cities"  :mapsList="maps" />
   </div>
 </template>
 
@@ -15,88 +14,6 @@ export default {
     return {
       forecastStations: forecastStationsJson.items,
       cities:[],
-
-      cities1: [
-        {
-          id: 1,
-          title: "Москва",
-          coords: {
-            latitude: 55.7522,
-            longitude: 37.6156,
-          },
-          info: [
-
-          ],
-          forecasts: {
-            forecastsIcon: "sun.svg",
-            temperature: -1,
-            min: 6,
-            max: 15,
-          },
-          wind: {
-            iconRotate: 20,
-            blackWindSpeed: 20,
-            redWindSpeed: 45,
-          },
-        },
-        {
-          id: 2,
-          title: "Астрахань",
-          coords: {
-            latitude: 46.3497,
-            longitude: 48.0408,
-          },
-          forecasts: {
-            forecastsIcon: "rain.svg",
-            temperature: 17,
-            min: 6,
-            max: 15,
-          },
-          wind: {
-            iconRotate: 190,
-            blackWindSpeed: 20,
-            redWindSpeed: 45,
-          },
-        },
-        {
-          id: 3,
-          title: "Барнаул",
-          coords: {
-            latitude: 53.3606,
-            longitude: 83.7636,
-          },
-          forecasts: {
-            forecastsIcon: "sunrain.svg",
-            temperature: 10,
-            min: 6,
-            max: 15,
-          },
-          wind: {
-            iconRotate: 40,
-            blackWindSpeed: 20,
-            redWindSpeed: 45,
-          },
-        },
-        {
-          id: 4,
-          title: "Брянск",
-          coords: {
-            latitude: 53.2521,
-            longitude: 34.3717,
-          },
-          forecasts: {
-            forecastsIcon: "storm.svg",
-            temperature: 5,
-            min: 6,
-            max: 15,
-          },
-          wind: {
-            iconRotate: 70,
-            blackWindSpeed: 20,
-            redWindSpeed: 45,
-          },
-        },
-      ],
       maps: mapsJson.maps
     }
   },
@@ -104,7 +21,6 @@ export default {
     this.getData(this.forecastStations)
   },
   methods: {
-
     setForecastsDayIcon(code) {
       let forecastsIcon = ''
       if (code == 1) forecastsIcon = 'sun-sun.svg'          //1. ясно
@@ -115,7 +31,6 @@ export default {
       else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain.svg' //6. переменная, дождь
       else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain-rain.svg' //6. переменная, дождь
       else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = 'storm.svg' //7. облачно, дождь
-
       return forecastsIcon
     },
     setForecastsNightIcon(code) {
@@ -128,11 +43,11 @@ export default {
       else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain.svg' //6. переменная, дождь
       else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain-rain.svg' //6. переменная, дождь
       else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = 'storm.svg' //7. облачно, дождь
-
       return forecastsIcon
     },
     createItemDayInfo(itemInfo) {
       let itemDayInfo = {
+        frcDate:itemInfo.frcDate,
         day: {
           forecasts: {
             forecastsIcon: this.setForecastsDayIcon(itemInfo.dayWCode),
