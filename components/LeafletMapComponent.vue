@@ -26,7 +26,7 @@
           :zoom="selectedMap.zoom"
           :center="selectedMap.center"
           @click="getClickCoords($event)"
-          :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom:false, dragging:false }"
+          :options="{ zoomControl: false, touchZoom: false,  doubleClickZoom: false, scrollWheelZoom:false, dragging:false }"
         >
           <LTileLayer
             :url="url"
