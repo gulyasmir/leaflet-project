@@ -13,8 +13,8 @@
       </button>
     </div>
     <div id="map-wrap" style="height: 500px">
-      <client-only>
-        <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" :options="{ zoomControl: false, scrollWheelZoom:false, dragging:false }" >
+      <client-only> <!-- :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom:false, dragging:false }-->
+        <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" :options="{zoomControl: false, touchZoom: false,doubleClickZoom:false, scrollWheelZoom:false, dragging:false }" >
           <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0.1" />
           <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds" :opacity="1" />
           <LControl position="topleft">
