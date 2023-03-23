@@ -68,7 +68,7 @@
           </LControl>
           <div v-if="citiesList.length">
             <div v-for="city in citiesList" :key="city.id">
-              <div @click="clickBlock(city)">
+              <div>
                 <LMarker
                   :lat-lng="[city.coords.latitude, city.coords.longitude]"
                 >
@@ -138,6 +138,7 @@ import InfoBlock from "./InfoBlock";
 import LeftControlList from "./LeftControlList";
 import LeftControlWeekList from "./LeftControlWeekList";
 import ChoroplethLayerComponent from "./ChoroplethLayerComponent";
+import maps from '../static/json/map-regions.json'
 
 export default {
   name: "LeafletMapComponent",
@@ -181,6 +182,7 @@ export default {
         center: [63.529039, 91.904869],
         zoom: 3,
       },
+      mapRegions: maps.maps,
       reload: false,
       selectedMapId: 1,
       center: [63.529039, 91.904869], // центр в Москве [55.4424, 37.3636]
@@ -242,7 +244,12 @@ export default {
 
   methods: {
     getClickCoords(eventData) {
-      console.log("eventData", eventData);
+      let lat = eventData.latlng.lat
+      let lng = eventData.latlng.lng
+      let selectMap = this.mapRegions.find((item) => ((lat < item.bounds[0][0] ) && (lat > item.bounds[1][0]) && (lng > item.bounds[0][1] ) && (lng < item.bounds[1][1])))
+      if (selectMap !== undefined ) {
+        this.selectedMapId = selectMap.id 
+      } 
     },
     setDay(day) {
       let dayButtons = document.getElementsByClassName("day-button");
@@ -284,10 +291,6 @@ export default {
       return this.viewData === "wind"
         ? "transform: rotate(" + iconRotate + "deg); width:30px; height:30px"
         : "";
-    },
-    clickBlock(city) {
-      // если понадобиться повесить сюда событие
-      console.log("clickBlock", city);
     },
     setNewMap() {
       this.setMap(this.selectedMapId)
