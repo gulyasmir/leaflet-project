@@ -73,9 +73,9 @@ export default {
         month = 1
         yaer++
       }
-      console.log('checkdate', checkdate)
+    let monthText = month < 10 ? '0' + month : month
     let weekDayName = this.getweekDay(weekDay) 
-      return weekDayName + ' ' +  newDate 
+      return weekDayName + ' ' +  newDate + '.' + monthText
     },
   },
   computed: {
@@ -83,7 +83,7 @@ export default {
       let nowDate = new Date()
       let yaer = nowDate.getFullYear()
       let month = nowDate.getMonth() + 1
-      let date = nowDate.getDate() -1
+      let date = nowDate.getDate() - 1
       let weekDay
 
       let array = []
