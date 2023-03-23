@@ -53,9 +53,9 @@ export default {
         default: return ''
       }
     },
-    getNewData(yaer, month, date, i, weekDay) {
-      let newDate = date + i
-      let checkdate
+    getNewData(yaer, month, date,  weekDay) {
+      var newDate = date
+      var checkdate
       if ((month <= 7 && (month % 2 != 0)) || ((month > 7) && (month % 2 == 0))) {  // 31 день в месяце
         checkdate = 31
       } else if (month === 2) {
@@ -63,34 +63,34 @@ export default {
       } else { // 30 дней  в месяце
         checkdate = 30
       }
-
       if (newDate > checkdate) {
-        newDate = 1
+        newDate = newDate - checkdate
         month++
       }
+     
       if ((newDate > checkdate) && month == 12) {
-        newDate = 1
+        newDate = newDate - checkdate
         month = 1
         yaer++
       }
+      console.log('checkdate', checkdate)
     let weekDayName = this.getweekDay(weekDay) 
-
-      return weekDayName + ' ' +  date 
+      return weekDayName + ' ' +  newDate 
     },
   },
   computed: {
     weekList() {
       let nowDate = new Date()
       let yaer = nowDate.getFullYear()
-      let month = nowDate.getMonth()
-      let date = nowDate.getDate()
+      let month = nowDate.getMonth() + 1
+      let date = nowDate.getDate() -1
       let weekDay
 
       let array = []
        for ( let i = 0; i < 8; i++) {
          weekDay =  new Date(new Date().getTime() + i * (24 * 60 * 60 * 1000)).getDay()
-         date = date + i
-         let newData =  this.getNewData(yaer, month, date, i, weekDay)
+         date = date + 1
+         let newData =  this.getNewData(yaer, month, date, weekDay)
          array.push({
            id: i,
            date: newData,
