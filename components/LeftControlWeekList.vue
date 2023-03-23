@@ -75,7 +75,7 @@ export default {
       }
     let monthText = month < 10 ? '0' + month : month
     let weekDayName = this.getweekDay(weekDay) 
-      return weekDayName + ' ' +  newDate + '.' + monthText
+      return weekDayName + ' ' +  newDate // + '.' + monthText
     },
   },
   computed: {
