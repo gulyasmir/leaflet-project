@@ -8,126 +8,91 @@
       </div>
     </div>
     <div v-else class="full">
-    <div class="control-buttons">
-      <button id="today" class="day-button active" @click="setDay('today')">
-        Сегодня
-      </button>
-      <button id="tomorrow" class="day-button" @click="setDay('tomorrow')">
-        Завтра
-      </button>
-      <button id="week" class="day-button" @click="setDay('week')">
-        На неделю
-      </button>
-    </div>
-    <div id="map-wrap" style="height: 500px">
-      
-      <client-only>  <!--  doubleClickZoom: false,   -->
-        <LMap
-          :zoom="selectedMap.zoom"
-          :center="selectedMap.center"
-          @click="getClickCoords($event)"  
-          :options="{ zoomControl: false, touchZoom: false,  scrollWheelZoom:false, dragging:false }"
-        >  
-          <LTileLayer
-            :url="url"
-            :attribution="attribution"
-            :bounds="selectedMap.bounds"
-            :opacity="0.1"
-          />
-          <LImageOverlay
-            :url="'/images/svg/' + selectedMap.mapURL + '.svg'"
-            :bounds="selectedMap.bounds"
-            :opacity="1"
-          />
-          <LControl position="topleft">
-            <LeftControlList
-              v-show="this.dayInfo !== 'week'"
-              :list="listData"
-              @selectControlButtons="onSelectControlButtons"
-            />
-            <LeftControlWeekList
-              v-show="this.dayInfo === 'week'"
-              @selectControlWeekButtons="onSelectControlWeekButtons"
-            />
-          </LControl>
-          <LControl>
-            <div class="map-buttons">
-              <button
-                :class="'forecasts-button ' + activeForecastsButton"
-                @click="setViewData('forecasts')"
-              >
-                Прогноз
-              </button>
-              <button
-                :class="'wind-button ' + activeWindButton"
-                @click="setViewData('wind')"
-              >
-                Ветер
-              </button>
-            </div>
-          </LControl>
-          <div v-if="citiesList.length">
-            <div v-for="city in citiesList" :key="city.id">
-              <div>
-                <LMarker
-                  :lat-lng="[city.coords.latitude, city.coords.longitude]"
-                  :options="{interactive:true}"  
-                  @click="getClickCoords($event)" 
-                >
-                  <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor"  >
-                    <InfoBlock
-                      :viewData="viewData"
-                      :city="city.info[dayIndex].day"
-                    />
-                  </LIcon> 
-                  <LTooltip  :options="{ direction:'bottom', interactive: true}"  @click="getClickCoords($event)" >
-                    <template>
-                      <div class="tooltip-bg">
-                        <div class="title">{{ city.title }}</div>
-                        <div class="info">
-                          <template>
-                            <InfoBlock
-                              :viewData="viewData"
-                              :city="city.info[dayIndex].day"
-                              :tooltip="'tooltip'"
-                            />
-                          </template>
-                          <p class="min-max-info">
-                            Min:
-                            <span class="blue-text"
-                              >{{ city.info[dayIndex].day.forecasts.min }}°
-                            </span>
-                            Max:
-                            <span class="orange-text"
-                              >{{ city.info[dayIndex].day.forecasts.max }}°
-                            </span>
-                          </p>
+      <div class="control-buttons">
+        <button id="today" class="day-button active" @click="setDay('today')">
+          Сегодня
+        </button>
+        <button id="tomorrow" class="day-button" @click="setDay('tomorrow')">
+          Завтра
+        </button>
+        <button id="week" class="day-button" @click="setDay('week')">
+          На неделю
+        </button>
+      </div>
+      <div id="map-wrap" style="height: 500px">
+
+        <client-only> <!--  doubleClickZoom: false,   -->
+          <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)"
+            :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom: false, dragging: false }">
+            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0.1" />
+            <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
+              :opacity="1" />
+            <LControl position="topleft">
+              <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
+                @selectControlButtons="onSelectControlButtons" />
+              <LeftControlWeekList v-show="this.dayInfo === 'week'"
+                @selectControlWeekButtons="onSelectControlWeekButtons" />
+            </LControl>
+            <LControl>
+              <div class="map-buttons">
+                <button :class="'forecasts-button ' + activeForecastsButton" @click="setViewData('forecasts')">
+                  Прогноз
+                </button>
+                <button :class="'wind-button ' + activeWindButton" @click="setViewData('wind')">
+                  Ветер
+                </button>
+              </div>
+            </LControl>
+            <div v-if="citiesList.length">
+              <div v-for="city in citiesList" :key="city.id">
+                <div>
+                  <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]" :options="{ interactive: true }"
+                    @click="getClickCoords($event)">
+                    <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
+                      <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" />
+                    </LIcon>
+                    <LTooltip :options="{ direction: 'bottom', interactive: true }" @click="getClickCoords($event)">
+                      <template>
+                        <div class="tooltip-bg">
+                          <div class="title">{{ city.title }}</div>
+                          <div class="info">
+                            <template>
+                              <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" :tooltip="'tooltip'" />
+                            </template>
+                            <p class="min-max-info">
+                              Min:
+                              <span class="blue-text">{{ city.info[dayIndex].day.forecasts.min }}°
+                              </span>
+                              Max:
+                              <span class="orange-text">{{ city.info[dayIndex].day.forecasts.max }}°
+                              </span>
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </template>
-                  </LTooltip>
-                </LMarker>
+                      </template>
+                    </LTooltip>
+                  </LMarker>
+                </div>
               </div>
             </div>
-          </div>
-        </LMap>
-      </client-only>
+          </LMap>
+        </client-only>
+      </div>
+      <div class="control-buttons">
+        <select v-model="selectedMapId">
+          <option value="0">--Выберите место--</option>
+          <option v-for="map in mapsList" v-bind:value="map.id">
+            {{ map.title }}
+          </option>
+        </select>
+        <button v-if="selectedMapId > 1" @click="selectedMapId = 1">
+          Вернуться на карту России
+        </button>
+
+      </div>
+
     </div>
-    <div class="control-buttons">
-      <select v-model="selectedMapId">
-      <option value="0">--Выберите место--</option>
-      <option v-for="map in mapsList" v-bind:value="map.id">
-        {{ map.title }}
-      </option>
-    </select>
-      <button v-if="selectedMapId > 1" @click="selectedMapId = 1">
-        Вернуться на карту России
-      </button>
-     
-    </div>
-   
   </div>
-</div>
 </template>
 
 <script>
@@ -250,17 +215,17 @@ export default {
       ],
     };
   },
-mounted() {
+  mounted() {
 
-},
+  },
   methods: {
     getClickCoords(eventData) {
       let lat = eventData.latlng.lat
       let lng = eventData.latlng.lng
-      let selectMap = this.mapRegions.find((item) => ((lat < item.bounds[0][0] ) && (lat > item.bounds[1][0]) && (lng > item.bounds[0][1] ) && (lng < item.bounds[1][1])))
-      if (selectMap !== undefined ) {
-        this.selectedMapId = selectMap.id 
-      } 
+      let selectMap = this.mapRegions.find((item) => ((lat < item.bounds[0][0]) && (lat > item.bounds[1][0]) && (lng > item.bounds[0][1]) && (lng < item.bounds[1][1])))
+      if (selectMap !== undefined) {
+        this.selectedMapId = selectMap.id
+      }
     },
     setDay(day) {
       let dayButtons = document.getElementsByClassName("day-button");
@@ -334,6 +299,7 @@ mounted() {
     -o-transform: rotate(0);
     transform: rotate(0);
   }
+
   to {
     -webkit-transform: rotate(360deg);
     -ms-transform: rotate(360deg);
@@ -341,6 +307,7 @@ mounted() {
     transform: rotate(360deg);
   }
 }
+
 .loader-ring-light {
   top: 50%;
   left: 63%;
@@ -353,10 +320,12 @@ mounted() {
   box-shadow: 0 5px 0 #1a7ac7 inset;
   animation: rotate-360 2s linear infinite;
 }
+
 #atmogramme .loader-ring {
   opacity: 0;
   transition: 0.5s all;
 }
+
 .loader-ring {
   position: absolute;
   top: 0;
@@ -367,13 +336,16 @@ mounted() {
   z-index: 555;
   pointer-events: none;
 }
+
 .full {
   height: 100%;
   width: 100%;
 }
+
 .leaflet-control-attribution {
   opacity: 0;
 }
+
 .map-component {
   width: 100%;
   height: 100%;
