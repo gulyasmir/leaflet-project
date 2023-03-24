@@ -71,16 +71,18 @@
               <div>
                 <LMarker
                   :lat-lng="[city.coords.latitude, city.coords.longitude]"
+                  :options="{interactive:true}"  
+                  @click="getClickCoords($event)" 
                 >
-                  <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
+                  <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor"  >
                     <InfoBlock
                       :viewData="viewData"
                       :city="city.info[dayIndex].day"
                     />
-                  </LIcon>
-                  <LTooltip>
+                  </LIcon> 
+                  <LTooltip  :options="{ direction:'bottom', interactive: true}"  @click="getClickCoords2($event)" >
                     <template>
-                      <div class="tooltip-bg">
+                      <div class="tooltip-bg"   @click="getClickCoords1($event)"  >
                         <div class="title">{{ city.title }}</div>
                         <div class="info">
                           <template>
@@ -111,12 +113,19 @@
         </LMap>
       </client-only>
     </div>
-    <select v-model="selectedMapId">
+    <div class="control-buttons">
+      <select v-model="selectedMapId">
       <option value="0">--Выберите место--</option>
       <option v-for="map in mapsList" v-bind:value="map.id">
         {{ map.title }}
       </option>
     </select>
+      <button v-if="selectedMapId > 1" @click="selectedMapId = 1">
+        Вернуться на карту России
+      </button>
+     
+    </div>
+   
   </div>
 </div>
 </template>
@@ -241,8 +250,14 @@ export default {
       ],
     };
   },
+mounted() {
 
+},
   methods: {
+
+    getClickCoords2(TooltipEvent) {
+console.log('TooltipEvent', TooltipEvent)
+    },
     getClickCoords(eventData) {
       let lat = eventData.latlng.lat
       let lng = eventData.latlng.lng
@@ -380,13 +395,13 @@ export default {
 .tooltip-bg {
   opacity: 0.8;
   background-color: #fff;
-  padding: 5px 70px;
+  padding: 5px 20px;
   border-radius: 3px;
 }
 
 .title {
-  font-size: 20px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 600;
   color: #036ba1;
   padding: 5px;
 }
