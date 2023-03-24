@@ -80,9 +80,9 @@
                       :city="city.info[dayIndex].day"
                     />
                   </LIcon> 
-                  <LTooltip  :options="{ direction:'bottom', interactive: true}"  @click="getClickCoords2($event)" >
+                  <LTooltip  :options="{ direction:'bottom', interactive: true}"  @click="getClickCoords($event)" >
                     <template>
-                      <div class="tooltip-bg"   @click="getClickCoords1($event)"  >
+                      <div class="tooltip-bg">
                         <div class="title">{{ city.title }}</div>
                         <div class="info">
                           <template>
@@ -254,10 +254,6 @@ mounted() {
 
 },
   methods: {
-
-    getClickCoords2(TooltipEvent) {
-console.log('TooltipEvent', TooltipEvent)
-    },
     getClickCoords(eventData) {
       let lat = eventData.latlng.lat
       let lng = eventData.latlng.lng
