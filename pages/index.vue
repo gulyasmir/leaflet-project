@@ -133,7 +133,7 @@ export default {
 <style>
 .map {
   width: 700px;
-  height: 150px;
+  height: 200px;
   padding: 5% 40%;
 }
 </style>
