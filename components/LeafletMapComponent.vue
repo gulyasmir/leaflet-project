@@ -24,9 +24,9 @@
         <client-only> <!--  doubleClickZoom: false,   -->
           <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)"
             :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom: false, dragging: false }">
-            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0.1" />
+            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
             <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
-              :opacity="1" />
+              :opacity="0.5" />
             <LControl position="topleft">
               <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
                 @selectControlButtons="onSelectControlButtons" />
