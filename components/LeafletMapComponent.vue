@@ -23,7 +23,7 @@
 
         <client-only> <!--  doubleClickZoom: false,   -->
           <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)"
-            :options="{ zoomControl: false, touchZoom: false, scrollWheelZoom: false, dragging: false }">
+            :options="{ doubleClickZoom: true, zoomControl: true, touchZoom: true, scrollWheelZoom: true, dragging: true }">
             <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
             <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
               :opacity="0.8" />
