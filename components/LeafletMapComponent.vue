@@ -224,7 +224,7 @@ export default {
       let lng = eventData.latlng.lng
       let selectMap = this.mapRegions.find((item) => ((lat < item.bounds[0][0]) && (lat > item.bounds[1][0]) && (lng > item.bounds[0][1]) && (lng < item.bounds[1][1])))
       if (selectMap !== undefined) {
-        this.selectedMapId = selectMap.id
+       // this.selectedMapId = selectMap.id
       }
     },
     setDay(day) {
