@@ -25,8 +25,8 @@
           <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)"
             :options="{ doubleClickZoom: true, zoomControl: true, touchZoom: true, scrollWheelZoom: true, dragging: true }">
             <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
-            <LImageOverlay :url="selectedMap.mapURL == 'russia' ? '/images/svg/' + selectedMap.mapURL + '.png' : '/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
-              :opacity="0.8" />
+            <LImageOverlay :url="selectedMap.mapURL == 'russia' ? '/images/svg/02.png' : '/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
+              :opacity="0" />
             <LControl position="topleft">
               <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
                 @selectControlButtons="onSelectControlButtons" />
@@ -88,7 +88,7 @@
         <button v-if="selectedMapId > 1" @click="selectedMapId = 1">
           Вернуться на карту России
         </button>
-
+{{ selectedMap }}
       </div>
 
     </div>
@@ -156,7 +156,7 @@ export default {
         ],
         title: "Россия",
         center: [63.529039, 91.904869],
-        zoom: 3,
+        zoom: 2.5,
       },
       mapRegions: maps.maps,
       reload: false,
@@ -164,8 +164,8 @@ export default {
       center: [63.529039, 91.904869], // центр в Москве [55.4424, 37.3636]
       zoom: 3,
       bounds: [
-        [82.265536, 17.356231],
-        [34.072684, 174.990258],
+        [82.091101, 17.782800],
+        [30.882628, 167.490653],
       ],
 
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
