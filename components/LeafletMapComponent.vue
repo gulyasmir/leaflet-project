@@ -26,7 +26,7 @@
             :options="{ doubleClickZoom: true, zoomControl: true, touchZoom: true, scrollWheelZoom: true, dragging: true }">
             <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
             <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
-              :opacity="0" />
+              :opacity="0.5" />
             <LControl position="topleft">
               <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
                 @selectControlButtons="onSelectControlButtons" />
@@ -43,9 +43,9 @@
                 </button>
               </div>
             </LControl>
-            <div v-if="citiesList.length">
-              <div v-for="city in citiesList" :key="city.id">
-             <!--  <div>
+            <div v-if="cities.length">
+              <div v-for="city in cities" :key="city.id">
+                <div>
                   <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]" :options="{ interactive: true }"
                     @click="getClickCoords($event)">
                     <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
@@ -72,7 +72,7 @@
                       </template>
                     </LTooltip>
                   </LMarker>
-                </div>-->  
+                </div>
               </div>
             </div>
           </LMap>
@@ -81,16 +81,15 @@
       <div class="control-buttons">
         <select v-model="selectedMapId">
           <option value="0">--Выберите место--</option>
-          <option v-for="map in mapsList" v-bind:value="map.id">
+          <option v-for="map in maps" v-bind:value="map.id">
             {{ map.title }}
           </option>
         </select>
         <button v-if="selectedMapId > 1" @click="selectedMapId = 1">
           Вернуться на карту России
         </button>
-
       </div>
-
+{{ selectedMap }}
     </div>
   </div>
 </template>
@@ -113,6 +112,8 @@ import LeftControlList from "./LeftControlList";
 import LeftControlWeekList from "./LeftControlWeekList";
 import ChoroplethLayerComponent from "./ChoroplethLayerComponent";
 import maps from '../static/json/map-regions.json'
+import forecastStationsJson from '../static/json/forecast_stations.json'
+import mapsJson from '../static/json/maps-full.json'
 
 export default {
   name: "LeafletMapComponent",
@@ -133,46 +134,32 @@ export default {
     LeftControlList,
     LeftControlWeekList,
   },
-  props: {
-    citiesList: {
-      type: Array,
-      defautl: [],
-    },
-    mapsList: {
-      type: Array,
-      defautl: [],
-    },
-  },
+
   data() {
     return {
+      forecastStations: forecastStationsJson.items,
+      cities:[],
+      maps: mapsJson.maps,
+     
       selectedMap: {
         id: 1,
-        mapURL: "russia",
+        mapURL: "mapRUSnewnew",
         bounds: [
-        [82.13764363566408,3.0234396457672124],
-           [24.3350854459834, 189.0703082084656]
-          //  [82.091101, 17.782800],
-          //  [31.183870, 167.490653]
+            [84.97164568510132, 17.15624570846558],
+           [15.758421993674277, 195.04687070846558]
+          // [82.091101, 17.782800],
+         //   [31.183870, 167.490653]
 
           //[82.265536, 17.356231],
          // [34.072684, 174.990258],
         ],
         title: "Россия",
-        center: [63.529039, 91.904869],
+        center: [54.58, 82.54],
         zoom: 2,
       },
       mapRegions: maps.maps,
       reload: false,
       selectedMapId: 1,
-      center: [63.529039, 91.904869], // центр в Москве [55.4424, 37.3636]
-      zoom: 3,
-      bounds: [
-          [82.091101, 17.782800],
-           [30.56982874492312, 205.87500214576724]
-      //  [82.091101, 17.782800],
-      //  [30.882628, 167.490653],
-      ],
-
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a target="_blank" href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -223,9 +210,203 @@ export default {
     };
   },
   mounted() {
-
+   
+    this.getDataSetting()
   },
   methods: {
+    setForecastsDayIcon(code) {
+      let forecastsIcon = ''
+      if (code == 1) forecastsIcon = 'sun-sun.svg'          //1. ясно
+      else if (code <= 3) forecastsIcon = 'sun.svg'            //2. переменная без осадков
+      else if (code == 4) forecastsIcon = 'sun-cloud.svg'            //3. облачно без осадков
+      else if (code > 4 && code < 25) forecastsIcon = 'cloud.svg'  //4. переменная, снег
+      else if (code > 24 && code < 41) forecastsIcon = 'sun-rain.svg' //5. облачно, снег
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain.svg' //6. переменная, дождь
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain-rain.svg' //6. переменная, дождь
+      else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = 'storm.svg' //7. облачно, дождь
+      return forecastsIcon
+    },
+    setForecastsNightIcon(code) {
+      let forecastsIcon = ''
+      if (code == 1) forecastsIcon = 'moon-moon.svg'          //1. ясно
+      else if (code <= 3) forecastsIcon = 'moon.svg'            //2. переменная без осадков
+      else if (code == 4) forecastsIcon = 'moon-cloud.svg'            //3. облачно без осадков
+      else if (code > 4 && code < 25) forecastsIcon = 'cloud.svg'  //4. переменная, снег
+      else if (code > 24 && code < 41) forecastsIcon = 'moon-rain.svg' //5. облачно, снег
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain.svg' //6. переменная, дождь
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain-rain.svg' //6. переменная, дождь
+      else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = 'storm.svg' //7. облачно, дождь
+      return forecastsIcon
+    },
+    createItemDayInfo(itemInfo) {
+      let itemDayInfo = {
+        frcDate:itemInfo.frcDate,
+        day: {
+          forecasts: {
+            forecastsIcon: this.setForecastsDayIcon(itemInfo.dayWCode),
+            temperature: (itemInfo.maxTemp + itemInfo.minTemp) / 2,
+            min: itemInfo.minTemp,
+            max: itemInfo.maxTemp,
+          },
+          wind: {
+            iconRotate: itemInfo.dayWD,
+            blackWindSpeed: itemInfo.dayWS,
+            redWindSpeed: null // информации о порывах ветра нет
+          }
+        },
+        night: {
+          forecasts: {
+            forecastsIcon: this.setForecastsNightIcon(itemInfo.dayWCode),
+            temperature: (itemInfo.maxTemp + itemInfo.minTemp) / 2,
+            min: itemInfo.minTemp,
+            max: itemInfo.maxTemp,
+          },
+          wind: {
+            iconRotate: itemInfo.dayWD,
+            blackWindSpeed: itemInfo.dayWS,
+            redWindSpeed: null // информации о порывах ветра нет
+          }
+        }
+      }
+      return itemDayInfo
+    },
+    async getSettingJson(title) {
+      const axios = require('axios');
+      return axios.get('/json/settings/setting-mapRUSnew.json').then((res) => res.data)
+    },
+    async getDataSetting() {
+      let settingJson = await this.getSettingJson(this.selectedMap.mapURL)
+      let sid  = settingJson.sources.towns
+      
+      const axios = require('axios');
+        let data = JSON.stringify({
+         "sid": sid
+        });
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'https://dcc5.modext.ru:8088/dataserver/api/v2/sources/list',
+          headers: {
+            'X-Ticket': 'ST-test',
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic Og=='
+          },
+          data: data
+        };
+
+      let citiesList = await axios.request(config)
+          .then((res) => {
+            console.log('res', res.data)
+            return res.data.response.sources.items
+              
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+
+          this.getDataseriesList(citiesList)
+          
+    },
+    async getDataseriesList(citiesList) {
+      console.log('citiesList', citiesList)
+      const result = [];
+      let idCity = 0
+      for (const item of citiesList) {
+      
+
+        const axios = require('axios');
+        let data = JSON.stringify({
+          "sid": [item.sid],
+          "dst": [
+            "FRC-WTH-DATA-XXXXXXXXXXX"
+          ]
+        });
+
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata',
+          headers: {
+            'X-Ticket': 'ST-test',
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic Og=='
+          },
+          data: data
+        };
+
+        axios.request(config)
+          .then((response) => {
+            return response.data.response.dataseries.items[0].lastData.cv.frcDay
+          }).then((fetchData) => {
+            let info = fetchData?.map(itemInfo => this.createItemDayInfo(itemInfo))
+            let itemCity = {
+              id: idCity,
+              title: item.name,
+              coords: {
+                latitude: item.loc.lat,
+                longitude: item.loc.lon,
+              },
+              info: info
+            }
+            result.push(itemCity)
+            idCity++
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+      }
+      this.cities  = result
+    },
+    async getData(forecastStations) {
+      console.log('forecastStations', forecastStations)
+      const result = [];
+      let idCity = 0
+      for (const item of forecastStations) {
+      
+
+        const axios = require('axios');
+        let data = JSON.stringify({
+          "sid": [item.sid],
+          "dst": [
+            "FRC-WTH-DATA-XXXXXXXXXXX"
+          ]
+        });
+
+        let config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata',
+          headers: {
+            'X-Ticket': 'ST-test',
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic Og=='
+          },
+          data: data
+        };
+
+        axios.request(config)
+          .then((response) => {
+            return response.data.response.dataseries.items[0].lastData.cv.frcDay
+          }).then((fetchData) => {
+            let info = fetchData?.map(itemInfo => this.createItemDayInfo(itemInfo))
+            let itemCity = {
+              id: idCity,
+              title: item.name,
+              coords: {
+                latitude: item.loc.lat,
+                longitude: item.loc.lon,
+              },
+              info: info
+            }
+            result.push(itemCity)
+            idCity++
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+      }
+      this.cities  = result
+    },
     getClickCoords(eventData) {
       console.log(eventData.latlng.lat, eventData.latlng.lng)
       let lat = eventData.latlng.lat
@@ -262,7 +443,7 @@ export default {
       this.timeInfo = data.timeInfo;
     },
     setMap(mapId) {
-      this.selectedMap = this.mapsList.find(function (elem) {
+      this.selectedMap = this.maps.find(function (elem) {
         return elem.id === mapId;
       });
     },
