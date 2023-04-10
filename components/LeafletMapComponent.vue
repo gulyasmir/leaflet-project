@@ -88,7 +88,7 @@
         <button v-if="selectedMapId > 1" @click="selectedMapId = 1">
           Вернуться на карту России
         </button>
-{{ selectedMap }}
+
       </div>
 
     </div>
