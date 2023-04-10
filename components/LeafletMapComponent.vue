@@ -25,7 +25,7 @@
           <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)"
             :options="{ doubleClickZoom: true, zoomControl: true, touchZoom: true, scrollWheelZoom: true, dragging: true }">
             <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
-            <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
+            <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"   crs="L.CRS.EPSG4326"
               :opacity="0.5" />
             <LControl position="topleft">
               <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
@@ -210,8 +210,8 @@ export default {
     };
   },
   mounted() {
-   
-    this.getDataSetting()
+    this.getData(this.forecastStations)
+   // this.getDataSetting()
   },
   methods: {
     setForecastsDayIcon(code) {
@@ -308,53 +308,38 @@ export default {
           
     },
     async getDataseriesList(citiesList) {
-      console.log('citiesList', citiesList)
-      const result = [];
-      let idCity = 0
-      for (const item of citiesList) {
+      let settingJson = await this.getSettingJson(this.selectedMap.mapURL)
+      console.log('settingJson', settingJson)
+      let sid  = settingJson.sources.towns
+      let dst  = settingJson.dataseries.forecasts
+
+      const axios = require('axios');
+      let data = JSON.stringify({
+        "sid": sid,
+        "dst": dst
+      });
       
-
-        const axios = require('axios');
-        let data = JSON.stringify({
-          "sid": [item.sid],
-          "dst": [
-            "FRC-WTH-DATA-XXXXXXXXXXX"
-          ]
-        });
-
-        let config = {
-          method: 'post',
-          maxBodyLength: Infinity,
-          url: 'https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata',
-          headers: {
-            'X-Ticket': 'ST-test',
-            'Content-Type': 'application/json',
-            'Authorization': 'Basic Og=='
-          },
-          data: data
-        };
-
-        axios.request(config)
-          .then((response) => {
-            return response.data.response.dataseries.items[0].lastData.cv.frcDay
-          }).then((fetchData) => {
-            let info = fetchData?.map(itemInfo => this.createItemDayInfo(itemInfo))
-            let itemCity = {
-              id: idCity,
-              title: item.name,
-              coords: {
-                latitude: item.loc.lat,
-                longitude: item.loc.lon,
-              },
-              info: info
-            }
-            result.push(itemCity)
-            idCity++
-          })
-          .catch((error) => {
-            console.log(error);
-          })
-      }
+      let config = {
+        method: 'post',
+        url: 'http://rzd.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata',
+        headers: {
+          'X-Ticket': 'ST-test',
+          'Content-Type': 'application/json',
+          'Authorization': 'Basic Og=='
+        },
+        data: data
+      };
+      console.log('getDataseriesList config', config);
+      axios.request(config)
+        .then((response) => {
+          return response.data.response.dataseries.items[0].lastData.cv.frcDay
+        }).then((fetchData) => {
+          console.log('fetchData', fetchData);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    
       this.cities  = result
     },
     async getData(forecastStations) {
