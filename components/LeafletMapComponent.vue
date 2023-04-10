@@ -156,7 +156,7 @@ export default {
         ],
         title: "Россия",
         center: [63.529039, 91.904869],
-        zoom: 2.5,
+        zoom: 3,
       },
       mapRegions: maps.maps,
       reload: false,
