@@ -25,7 +25,7 @@
           <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)"
             :options="{ doubleClickZoom: true, zoomControl: true, touchZoom: true, scrollWheelZoom: true, dragging: true }">
             <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
-            <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
+            <LImageOverlay :url="selectedMap.mapURL == 'russia' ? '/images/svg/' + selectedMap.mapURL + '.png' : '/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
               :opacity="0.8" />
             <LControl position="topleft">
               <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
@@ -147,10 +147,12 @@ export default {
     return {
       selectedMap: {
         id: 1,
-        mapURL: "russia",
+        mapURL: "russia-new",
         bounds: [
-          [82.265536, 17.356231],
-          [34.072684, 174.990258],
+            [78.041078, 14.558682 ],
+            [41.432895, 168.078049 ]
+          //[82.265536, 17.356231],
+         // [34.072684, 174.990258],
         ],
         title: "Россия",
         center: [63.529039, 91.904869],
