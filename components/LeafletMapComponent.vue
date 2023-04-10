@@ -19,13 +19,13 @@
           На неделю
         </button>
       </div>
-      <div id="map-wrap" style="height: 500px">
+      <div id="map-wrap" style="weight:800px;height: 700px">
 
         <client-only> <!--  doubleClickZoom: false,   -->
           <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)"
             :options="{ doubleClickZoom: true, zoomControl: true, touchZoom: true, scrollWheelZoom: true, dragging: true }">
             <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
-            <LImageOverlay :url="selectedMap.mapURL == 'russia' ? '/images/svg/02.png' : '/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
+            <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
               :opacity="0" />
             <LControl position="topleft">
               <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
@@ -45,7 +45,7 @@
             </LControl>
             <div v-if="citiesList.length">
               <div v-for="city in citiesList" :key="city.id">
-                <div>
+             <!--  <div>
                   <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]" :options="{ interactive: true }"
                     @click="getClickCoords($event)">
                     <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
@@ -72,7 +72,7 @@
                       </template>
                     </LTooltip>
                   </LMarker>
-                </div>
+                </div>-->  
               </div>
             </div>
           </LMap>
@@ -149,8 +149,11 @@ export default {
         id: 1,
         mapURL: "russia",
         bounds: [
-            [82.091101, 17.782800],
-            [31.183870, 167.490653]
+        [82.13764363566408,3.0234396457672124],
+           [24.3350854459834, 189.0703082084656]
+          //  [82.091101, 17.782800],
+          //  [31.183870, 167.490653]
+
           //[82.265536, 17.356231],
          // [34.072684, 174.990258],
         ],
@@ -164,8 +167,10 @@ export default {
       center: [63.529039, 91.904869], // центр в Москве [55.4424, 37.3636]
       zoom: 3,
       bounds: [
-        [82.091101, 17.782800],
-        [30.882628, 167.490653],
+          [82.091101, 17.782800],
+           [30.56982874492312, 205.87500214576724]
+      //  [82.091101, 17.782800],
+      //  [30.882628, 167.490653],
       ],
 
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -222,6 +227,7 @@ export default {
   },
   methods: {
     getClickCoords(eventData) {
+      console.log(eventData.latlng.lat, eventData.latlng.lng)
       let lat = eventData.latlng.lat
       let lng = eventData.latlng.lng
       let selectMap = this.mapRegions.find((item) => ((lat < item.bounds[0][0]) && (lat > item.bounds[1][0]) && (lng > item.bounds[0][1]) && (lng < item.bounds[1][1])))
