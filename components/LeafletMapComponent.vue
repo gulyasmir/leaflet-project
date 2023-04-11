@@ -210,8 +210,8 @@ export default {
     };
   },
   mounted() {
-    this.getData(this.forecastStations)
-   // this.getDataSetting()
+   // this.getData(this.forecastStations)
+    this.getDataSetting()
   },
   methods: {
     setForecastsDayIcon(code) {
@@ -304,7 +304,7 @@ export default {
             console.log(error);
           })
 
-          this.getDataseriesList(citiesList)
+          this.getData(this.forecastStations)
           
     },
     async getDataseriesList(citiesList) {
@@ -312,7 +312,7 @@ export default {
       console.log('settingJson', settingJson)
       let sid  = settingJson.sources.towns
       let dst  = settingJson.dataseries.forecasts
-
+      const result = [];
       const axios = require('axios');
       let data = JSON.stringify({
         "sid": sid,
@@ -321,7 +321,7 @@ export default {
       
       let config = {
         method: 'post',
-        url: 'http://rzd.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata',
+        url: 'https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata',
         headers: {
           'X-Ticket': 'ST-test',
           'Content-Type': 'application/json',
@@ -332,7 +332,8 @@ export default {
       console.log('getDataseriesList config', config);
       axios.request(config)
         .then((response) => {
-          return response.data.response.dataseries.items[0].lastData.cv.frcDay
+          console.log('response', response);
+         // return response.data.response.dataseries.items[0].lastData.cv.frcDay
         }).then((fetchData) => {
           console.log('fetchData', fetchData);
         })
