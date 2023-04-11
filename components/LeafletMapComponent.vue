@@ -19,26 +19,56 @@
           На неделю
         </button>
       </div>
-      <div id="map-wrap" style="weight:800px;height: 700px">
-
-        <client-only> <!--  doubleClickZoom: false,   -->
-          <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)"
-            :options="{ doubleClickZoom: true, zoomControl: true, touchZoom: true, scrollWheelZoom: true, dragging: true }">
-            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
-            <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"   crs="L.CRS.EPSG4326"
-              :opacity="0.5" />
+      <div id="map-wrap" style="weight: 800px; height: 700px">
+        <client-only>
+          <!--  doubleClickZoom: false,   -->
+          <LMap
+            :zoom="selectedMap.zoom"
+            :center="selectedMap.center"
+            @click="getClickCoords($event)"
+            :options="{
+              doubleClickZoom: true,
+              zoomControl: true,
+              touchZoom: true,
+              scrollWheelZoom: true,
+              dragging: true,
+            }"
+          >
+            <LTileLayer
+              :url="url"
+              :attribution="attribution"
+              :bounds="selectedMap.bounds"
+              :opacity="1"
+            />
+            <LImageOverlay
+              :url="'/images/svg/' + selectedMap.mapURL + '.svg'"
+              :bounds="selectedMap.bounds"
+              crs="L.CRS.EPSG4326"
+              :opacity="0.5"
+            />
             <LControl position="topleft">
-              <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
-                @selectControlButtons="onSelectControlButtons" />
-              <LeftControlWeekList v-show="this.dayInfo === 'week'"
-                @selectControlWeekButtons="onSelectControlWeekButtons" />
+              <LeftControlList
+                v-show="this.dayInfo !== 'week'"
+                :list="listData"
+                @selectControlButtons="onSelectControlButtons"
+              />
+              <LeftControlWeekList
+                v-show="this.dayInfo === 'week'"
+                @selectControlWeekButtons="onSelectControlWeekButtons"
+              />
             </LControl>
             <LControl>
               <div class="map-buttons">
-                <button :class="'forecasts-button ' + activeForecastsButton" @click="setViewData('forecasts')">
+                <button
+                  :class="'forecasts-button ' + activeForecastsButton"
+                  @click="setViewData('forecasts')"
+                >
                   Прогноз
                 </button>
-                <button :class="'wind-button ' + activeWindButton" @click="setViewData('wind')">
+                <button
+                  :class="'wind-button ' + activeWindButton"
+                  @click="setViewData('wind')"
+                >
                   Ветер
                 </button>
               </div>
@@ -46,25 +76,43 @@
             <div v-if="cities.length">
               <div v-for="city in cities" :key="city.id">
                 <div>
-                  <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]" :options="{ interactive: true }"
-                    @click="getClickCoords($event)">
-                    <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
-                      <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" />
+                  <LMarker
+                    :lat-lng="[city.coords.latitude, city.coords.longitude]"
+                    :options="{ interactive: true }"
+                    @click="getClickCoords($event)"
+                  >
+                    <LIcon
+                      :icon-size="dynamicSize"
+                      :icon-anchor="dynamicAnchor"
+                    >
+                      <InfoBlock
+                        :viewData="viewData"
+                        :city="city.info[dayIndex].day"
+                      />
                     </LIcon>
-                    <LTooltip :options="{ direction: 'bottom', interactive: true }" @click="getClickCoords($event)">
+                    <LTooltip
+                      :options="{ direction: 'bottom', interactive: true }"
+                      @click="getClickCoords($event)"
+                    >
                       <template>
                         <div class="tooltip-bg">
-                          <div class="title">{{ city.title }}</div>
+                          <div class="title">{{ city.nameStation }}</div>
                           <div class="info">
                             <template>
-                              <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" :tooltip="'tooltip'" />
+                              <InfoBlock
+                                :viewData="viewData"
+                                :city="city.info[dayIndex].day"
+                                :tooltip="'tooltip'"
+                              />
                             </template>
                             <p class="min-max-info">
                               Min:
-                              <span class="blue-text">{{ city.info[dayIndex].day.forecasts.min }}°
+                              <span class="blue-text"
+                                >{{ city.info[dayIndex].day.forecasts.min }}°
                               </span>
                               Max:
-                              <span class="orange-text">{{ city.info[dayIndex].day.forecasts.max }}°
+                              <span class="orange-text"
+                                >{{ city.info[dayIndex].day.forecasts.max }}°
                               </span>
                             </p>
                           </div>
@@ -89,7 +137,7 @@
           Вернуться на карту России
         </button>
       </div>
-{{ selectedMap }}
+      {{ selectedMap }}
     </div>
   </div>
 </template>
@@ -111,9 +159,9 @@ import InfoBlock from "./InfoBlock";
 import LeftControlList from "./LeftControlList";
 import LeftControlWeekList from "./LeftControlWeekList";
 import ChoroplethLayerComponent from "./ChoroplethLayerComponent";
-import maps from '../static/json/map-regions.json'
-import forecastStationsJson from '../static/json/forecast_stations.json'
-import mapsJson from '../static/json/maps-full.json'
+import maps from "../static/json/map-regions.json";
+import forecastStationsJson from "../static/json/forecast_stations.json";
+import mapsJson from "../static/json/maps-full.json";
 
 export default {
   name: "LeafletMapComponent",
@@ -138,20 +186,15 @@ export default {
   data() {
     return {
       forecastStations: forecastStationsJson.items,
-      cities:[],
+      cities: [],
       maps: mapsJson.maps,
-     
+
       selectedMap: {
         id: 1,
         mapURL: "mapRUSnewnew",
         bounds: [
-            [84.97164568510132, 17.15624570846558],
-           [15.758421993674277, 195.04687070846558]
-          // [82.091101, 17.782800],
-         //   [31.183870, 167.490653]
-
-          //[82.265536, 17.356231],
-         // [34.072684, 174.990258],
+          [84.97164568510132, 17.15624570846558],
+          [15.758421993674277, 195.04687070846558],
         ],
         title: "Россия",
         center: [40.83043687764923, 82.76000976562501],
@@ -207,40 +250,138 @@ export default {
           ],
         },
       ],
+      fakeData: {
+        frcDay: [
+          {
+            dayPrec: 0.5,
+            dayPrs: 754,
+            dayWCode: 27,
+            dayWD: 10,
+            dayWS: 1,
+            frcDate: "2023-01-08",
+            maxTemp: -37,
+            minTemp: -45,
+            ngtPrec: 0,
+            ngtPrs: 754,
+            ngtWCode: 25,
+            ngtWD: 20,
+            ngtWS: 1,
+          },
+          {
+            dayPrec: 0.2,
+            dayPrs: 753,
+            dayWCode: 26,
+            dayWD: 20,
+            dayWS: 1,
+            frcDate: "2023-01-09",
+            maxTemp: -36,
+            minTemp: -38,
+            ngtPrec: 0.3,
+            ngtPrs: 754,
+            ngtWCode: 27,
+            ngtWD: 130,
+            ngtWS: 0,
+          },
+          {
+            dayPrec: 0.7,
+            dayPrs: 748,
+            dayWCode: 26,
+            dayWD: 40,
+            dayWS: 2,
+            frcDate: "2023-01-10",
+            maxTemp: -31,
+            minTemp: -46,
+            ngtPrec: 0.1,
+            ngtPrs: 752,
+            ngtWCode: 25,
+            ngtWD: 10,
+            ngtWS: 2,
+          },
+          {
+            dayPrec: 0.1,
+            dayPrs: 750,
+            dayWCode: 25,
+            dayWD: 310,
+            dayWS: 2,
+            frcDate: "2023-01-11",
+            maxTemp: -31,
+            minTemp: -33,
+            ngtPrec: 0.5,
+            ngtPrs: 746,
+            ngtWCode: 26,
+            ngtWD: 50,
+            ngtWS: 2,
+          },
+          {
+            dayPrec: 0.1,
+            dayPrs: 759,
+            dayWCode: 25,
+            dayWD: 270,
+            dayWS: 3,
+            frcDate: "2023-01-15",
+            maxTemp: -46,
+            minTemp: -46,
+            ngtPrec: 0,
+            ngtPrs: 761,
+            ngtWCode: 3,
+            ngtWD: 280,
+            ngtWS: 2,
+          },
+        ],
+        stHgt: "100.72",
+        stIndex: "24959",
+        stLat: "62.01667",
+        stLon: "129.71667",
+        stName: "Якутск",
+        timeZone: "Local",
+      },
     };
   },
   mounted() {
-   // this.getData(this.forecastStations)
-    this.getDataSetting()
+    // this.getData(this.forecastStations)
+    this.getStart();
   },
   methods: {
     setForecastsDayIcon(code) {
-      let forecastsIcon = ''
-      if (code == 1) forecastsIcon = 'sun-sun.svg'          //1. ясно
-      else if (code <= 3) forecastsIcon = 'sun.svg'            //2. переменная без осадков
-      else if (code == 4) forecastsIcon = 'sun-cloud.svg'            //3. облачно без осадков
-      else if (code > 4 && code < 25) forecastsIcon = 'cloud.svg'  //4. переменная, снег
-      else if (code > 24 && code < 41) forecastsIcon = 'sun-rain.svg' //5. облачно, снег
-      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain.svg' //6. переменная, дождь
-      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain-rain.svg' //6. переменная, дождь
-      else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = 'storm.svg' //7. облачно, дождь
-      return forecastsIcon
+      let forecastsIcon = "";
+      if (code == 1) forecastsIcon = "sun-sun.svg"; //1. ясно
+      else if (code <= 3) forecastsIcon = "sun.svg"; //2. переменная без осадков
+      else if (code == 4)
+        forecastsIcon = "sun-cloud.svg"; //3. облачно без осадков
+      else if (code > 4 && code < 25)
+        forecastsIcon = "cloud.svg"; //4. переменная, снег
+      else if (code > 24 && code < 41)
+        forecastsIcon = "sun-rain.svg"; //5. облачно, снег
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76))
+        forecastsIcon = "rain.svg"; //6. переменная, дождь
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76))
+        forecastsIcon = "rain-rain.svg"; //6. переменная, дождь
+      else if ((code > 54 && code < 62) || code > 75)
+        forecastsIcon = "storm.svg"; //7. облачно, дождь
+      return forecastsIcon;
     },
     setForecastsNightIcon(code) {
-      let forecastsIcon = ''
-      if (code == 1) forecastsIcon = 'moon-moon.svg'          //1. ясно
-      else if (code <= 3) forecastsIcon = 'moon.svg'            //2. переменная без осадков
-      else if (code == 4) forecastsIcon = 'moon-cloud.svg'            //3. облачно без осадков
-      else if (code > 4 && code < 25) forecastsIcon = 'cloud.svg'  //4. переменная, снег
-      else if (code > 24 && code < 41) forecastsIcon = 'moon-rain.svg' //5. облачно, снег
-      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain.svg' //6. переменная, дождь
-      else if ((code > 40 && code < 55) || (code > 61 && code < 76)) forecastsIcon = 'rain-rain.svg' //6. переменная, дождь
-      else if ((code > 54 && code < 62) || (code > 75)) forecastsIcon = 'storm.svg' //7. облачно, дождь
-      return forecastsIcon
+      let forecastsIcon = "";
+      if (code == 1) forecastsIcon = "moon-moon.svg"; //1. ясно
+      else if (code <= 3)
+        forecastsIcon = "moon.svg"; //2. переменная без осадков
+      else if (code == 4)
+        forecastsIcon = "moon-cloud.svg"; //3. облачно без осадков
+      else if (code > 4 && code < 25)
+        forecastsIcon = "cloud.svg"; //4. переменная, снег
+      else if (code > 24 && code < 41)
+        forecastsIcon = "moon-rain.svg"; //5. облачно, снег
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76))
+        forecastsIcon = "rain.svg"; //6. переменная, дождь
+      else if ((code > 40 && code < 55) || (code > 61 && code < 76))
+        forecastsIcon = "rain-rain.svg"; //6. переменная, дождь
+      else if ((code > 54 && code < 62) || code > 75)
+        forecastsIcon = "storm.svg"; //7. облачно, дождь
+      return forecastsIcon;
     },
     createItemDayInfo(itemInfo) {
       let itemDayInfo = {
-        frcDate:itemInfo.frcDate,
+        frcDate: itemInfo.frcDate,
         day: {
           forecasts: {
             forecastsIcon: this.setForecastsDayIcon(itemInfo.dayWCode),
@@ -251,130 +392,176 @@ export default {
           wind: {
             iconRotate: itemInfo.dayWD,
             blackWindSpeed: itemInfo.dayWS,
-            redWindSpeed: null // информации о порывах ветра нет
-          }
+            redWindSpeed: null, // информации о порывах ветра нет
+          },
         },
         night: {
           forecasts: {
-            forecastsIcon: this.setForecastsNightIcon(itemInfo.dayWCode),
+            forecastsIcon: this.setForecastsNightIcon(itemInfo.ngtWCode),
             temperature: (itemInfo.maxTemp + itemInfo.minTemp) / 2,
             min: itemInfo.minTemp,
             max: itemInfo.maxTemp,
           },
           wind: {
-            iconRotate: itemInfo.dayWD,
-            blackWindSpeed: itemInfo.dayWS,
-            redWindSpeed: null // информации о порывах ветра нет
-          }
-        }
-      }
-      return itemDayInfo
+            iconRotate: itemInfo.ngtWD,
+            blackWindSpeed: itemInfo.ngtWS,
+            redWindSpeed: null, // информации о порывах ветра нет
+          },
+        },
+      };
+      return itemDayInfo;
     },
     async getSettingJson(title) {
-      const axios = require('axios');
-      return axios.get('/json/settings/setting-mapRUSnew.json').then((res) => res.data)
+      const axios = require("axios");
+      return axios
+        .get("/json/settings/setting-mapRUSnew.json")
+        .then((res) => res.data);
     },
-    async getDataSetting() {
-      let settingJson = await this.getSettingJson(this.selectedMap.mapURL)
-      let sid  = settingJson.sources.towns
-      
-      const axios = require('axios');
-        let data = JSON.stringify({
-         "sid": sid
-        });
-        let config = {
-          method: 'post',
-          maxBodyLength: Infinity,
-          url: 'https://dcc5.modext.ru:8088/dataserver/api/v2/sources/list',
-          headers: {
-            'X-Ticket': 'ST-test',
-            'Content-Type': 'application/json',
-            'Authorization': 'Basic Og=='
-          },
-          data: data
-        };
-
-      let citiesList = await axios.request(config)
-          .then((res) => {
-            console.log('res', res.data)
-            return res.data.response.sources.items
-              
-          })
-          .catch((error) => {
-            console.log(error);
-          })
-
-          this.getData(this.forecastStations)
-          
+    async getStart() {
+      let settingJson = await this.getSettingJson(this.selectedMap.mapURL);
+      let sid = settingJson.sources.towns;
+      let dst = settingJson.dataseries.forecasts;
+      let citiesInfo = await this.getDataSetting(sid, dst);
+      this.cities = citiesInfo;
+      console.log("citiesInfo", citiesInfo);
     },
-    async getDataseriesList(citiesList) {
-      let settingJson = await this.getSettingJson(this.selectedMap.mapURL)
-      console.log('settingJson', settingJson)
-      let sid  = settingJson.sources.towns
-      let dst  = settingJson.dataseries.forecasts
-      const result = [];
-      const axios = require('axios');
+    async getDataSetting(sid, dst) {
+      const axios = require("axios");
       let data = JSON.stringify({
-        "sid": sid,
-        "dst": dst
+        sid: sid,
       });
-      
       let config = {
-        method: 'post',
-        url: 'https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata',
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://dcc5.modext.ru:8088/dataserver/api/v2/sources/list",
         headers: {
-          'X-Ticket': 'ST-test',
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic Og=='
+          "X-Ticket": "ST-test",
+          "Content-Type": "application/json",
+          Authorization: "Basic Og==",
         },
-        data: data
+        data: data,
       };
-      console.log('getDataseriesList config', config);
-      axios.request(config)
-        .then((response) => {
-          console.log('response', response);
-         // return response.data.response.dataseries.items[0].lastData.cv.frcDay
-        }).then((fetchData) => {
-          console.log('fetchData', fetchData);
+
+      let citiesList = await axios
+        .request(config)
+        .then((res) => {
+          console.log(
+            "res.data.response.sources.items",
+            res.data.response.sources.items
+          );
+          return res.data.response.sources.items;
         })
         .catch((error) => {
           console.log(error);
-        })
-    
-      this.cities  = result
-    },
-    async getData(forecastStations) {
-      console.log('forecastStations', forecastStations)
-      const result = [];
-      let idCity = 0
-      for (const item of forecastStations) {
-      
+        });
 
-        const axios = require('axios');
+      return await this.makeCitiesInfo(citiesList, dst); //name, sid, cityInfo (coords, info)
+    },
+    async makeCitiesInfo(citiesList, dst) {
+      let result = [];
+      let number = 0;
+      for (const item of citiesList) {
+        let cityInfo = await this.getDataseriesCity(item.sid, dst);
+        console.log("item", item);
+        result.push({
+          id: number,
+          title: item.name,
+          coords: cityInfo.coords,
+          info: cityInfo.info,
+          sid: item.sid,
+          nameStation: cityInfo.nameStation
+        });
+        number++;
+      }
+      return result;
+    },
+    async getDataseriesCity(sid, dst) {
+      const axios = require("axios");
+      let data = JSON.stringify({
+        sid: [sid],
+        dst: [dst],
+        // "srctid": ["SRC_TYP_METPLACE"],
+        // "urn": [ "RHM-DATA-HMC-FORECAST"]
+      });
+
+      let config = {
+        method: "post",
+        url: "https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata",
+        headers: {
+          "X-Ticket": "ST-test",
+          "Content-Type": "application/json",
+          Authorization: "Basic Og==",
+        },
+        data: data,
+      };
+      console.log("getDataseriesList config", config);
+
+      return await axios
+        .request(config)
+        .then((response) => {
+          console.log("response", response);
+          return response.data.response.dataseries.items.length
+            ? response.data.response.dataseries.items[0].lastData.cv
+            : this.fakeData;
+        })
+        .then((fetchData) => {
+          if (fetchData && fetchData.frcDay.length) {
+            console.log("fetchData", fetchData);
+            let info = fetchData.frcDay?.map(
+              (itemInfo) => this.createItemDayInfo(itemInfo) //массив данных о погоде в этом городе
+            );
+            let itemCity = {
+              coords: {
+                latitude: fetchData.stLat,
+                longitude: fetchData.stLon,
+              },
+              nameStation: fetchData.stName,
+              info: info,
+            };
+            console.log("itemCity", itemCity);
+            return itemCity;
+          } else {
+            return null;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    /*
+    async getData(forecastStations) {
+      console.log("forecastStations", forecastStations);
+      const result = [];
+      let idCity = 0;
+      for (const item of forecastStations) {
+        const axios = require("axios");
         let data = JSON.stringify({
-          "sid": [item.sid],
-          "dst": [
-            "FRC-WTH-DATA-XXXXXXXXXXX"
-          ]
+          sid: [item.sid],
+          dst: ["FRC-WTH-DATA-XXXXXXXXXXX"],
         });
 
         let config = {
-          method: 'post',
+          method: "post",
           maxBodyLength: Infinity,
-          url: 'https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata',
+          url: "https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata",
           headers: {
-            'X-Ticket': 'ST-test',
-            'Content-Type': 'application/json',
-            'Authorization': 'Basic Og=='
+            "X-Ticket": "ST-test",
+            "Content-Type": "application/json",
+            Authorization: "Basic Og==",
           },
-          data: data
+          data: data,
         };
 
-        axios.request(config)
+        axios
+          .request(config)
           .then((response) => {
-            return response.data.response.dataseries.items[0].lastData.cv.frcDay
-          }).then((fetchData) => {
-            let info = fetchData?.map(itemInfo => this.createItemDayInfo(itemInfo))
+            return response.data.response.dataseries.items[0].lastData.cv
+              .frcDay;
+          })
+          .then((fetchData) => {
+            let info = fetchData?.map((itemInfo) =>
+              this.createItemDayInfo(itemInfo)
+            );
             let itemCity = {
               id: idCity,
               title: item.name,
@@ -382,24 +569,30 @@ export default {
                 latitude: item.loc.lat,
                 longitude: item.loc.lon,
               },
-              info: info
-            }
-            result.push(itemCity)
-            idCity++
+              info: info,
+            };
+            result.push(itemCity);
+            idCity++;
           })
           .catch((error) => {
             console.log(error);
-          })
+          });
       }
-      this.cities  = result
-    },
+      this.cities = result;
+    },*/
     getClickCoords(eventData) {
-      console.log(eventData.latlng.lat, eventData.latlng.lng)
-      let lat = eventData.latlng.lat
-      let lng = eventData.latlng.lng
-      let selectMap = this.mapRegions.find((item) => ((lat < item.bounds[0][0]) && (lat > item.bounds[1][0]) && (lng > item.bounds[0][1]) && (lng < item.bounds[1][1])))
+      console.log(eventData.latlng.lat, eventData.latlng.lng);
+      let lat = eventData.latlng.lat;
+      let lng = eventData.latlng.lng;
+      let selectMap = this.mapRegions.find(
+        (item) =>
+          lat < item.bounds[0][0] &&
+          lat > item.bounds[1][0] &&
+          lng > item.bounds[0][1] &&
+          lng < item.bounds[1][1]
+      );
       if (selectMap !== undefined) {
-       // this.selectedMapId = selectMap.id
+        // this.selectedMapId = selectMap.id
       }
     },
     setDay(day) {
@@ -444,16 +637,15 @@ export default {
         : "";
     },
     setNewMap() {
-      this.setMap(this.selectedMapId)
-      this.reload = false
-    }
+      this.setMap(this.selectedMapId);
+      this.reload = false;
+    },
   },
   watch: {
     selectedMapId() {
-      this.reload = true
-      setTimeout(this.setNewMap, 500)
-
-    }
+      this.reload = true;
+      setTimeout(this.setNewMap, 500);
+    },
   },
   computed: {
     dynamicSize() {
@@ -524,7 +716,6 @@ export default {
 .map-component {
   width: 100%;
   height: 100%;
-
 }
 
 .black-weight-text {

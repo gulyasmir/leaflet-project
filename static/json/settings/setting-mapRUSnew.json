@@ -1,14 +1,22 @@
 {
-    "name": "Россия",
-    "sources": {
-      "me": "RU00-00000-0000",
-      "parts": [],
-      "towns": ["RU80-980401-0000", "RU98-998401-0000"]
-    },
-    "dataseries": {
-      "alerts": "ATM-AIT-EMRG-IXXXXXXXXXX",
-      "forecasts": "ATM-AIT-EMRG-IXXXXXXXXXX"
-    }
+  "name": "Россия",
+  "sources": {
+    "me": "RU00-00000-0000",
+    "parts": [],
+    "towns": [
+      "RU08-031735-0000",
+      "RU14-50000-0000",
+      "RU14-50000-0000",
+      "RU02-50000-0000",
+      "RU02-50000-0000",
+      "RU77-50000-0000",
+      "RU02-50000-0000",
+      "RU80-980401-0000",
+      "RU98-998401-0000"
+    ]
+  },
+  "dataseries": {
+    "alerts": "ATM-AIT-EMRG-IXXXXXXXXXX",
+    "forecasts": "ATM-AIT-EMRG-IXXXXXXXXXX"
   }
-  
-  
+}
