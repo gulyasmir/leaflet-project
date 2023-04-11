@@ -638,6 +638,7 @@ export default {
     },
     setNewMap() {
       this.setMap(this.selectedMapId);
+      this.getStart();
       this.reload = false;
     },
   },
