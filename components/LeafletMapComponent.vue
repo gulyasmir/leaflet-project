@@ -28,6 +28,8 @@
             touchZoom: true,
             scrollWheelZoom: true,
             dragging: true,
+            zoomSnap:0.1,
+            zoomDelta:0.1
           }">
             <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
             <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
