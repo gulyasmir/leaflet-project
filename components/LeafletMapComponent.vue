@@ -462,10 +462,12 @@ export default {
     async makeCitiesInfo(citiesList, dst) {
       let result = [];
       let number = 0;
+      console.log('========== Проходим список городов =================');
       for (const item of citiesList) {
+        console.log('-------------------', item.name, " - ", item.sid, ' --------------------------');
         let cityInfo = await this.getDataseriesCity(item.sid, dst);
-        console.log("item", item);
-        result.push({
+        if (cityInfo !== null) {
+          result.push({
           id: number,
           title: item.name,
           coords: cityInfo.coords,
@@ -474,6 +476,7 @@ export default {
           nameStation: cityInfo.nameStation
         });
         number++;
+        }
       }
       return result;
     },
@@ -501,13 +504,13 @@ export default {
       return await axios
         .request(config)
         .then((response) => {
-          console.log("response", response);
+          console.log("response.data.response.dataseries.items", response.data.response.dataseries.items);
           return response.data.response.dataseries.items.length
             ? response.data.response.dataseries.items[0].lastData.cv
-            : this.fakeData;
+            : null //this.fakeData;
         })
         .then((fetchData) => {
-          if (fetchData && fetchData.frcDay.length) {
+          if (fetchData !== null && fetchData.frcDay.length) {
             console.log("fetchData", fetchData);
             let info = fetchData.frcDay?.map(
               (itemInfo) => this.createItemDayInfo(itemInfo) //массив данных о погоде в этом городе
