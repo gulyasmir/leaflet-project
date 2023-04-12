@@ -423,7 +423,7 @@ export default {
       let dst = settingJson.dataseries.forecasts;
       let citiesInfo = await this.getDataSetting(sid, dst);
       this.cities = citiesInfo;
-      console.log("citiesInfo", citiesInfo);
+
     },
     async getDataSetting(sid, dst) {
       const axios = require("axios");
@@ -445,10 +445,6 @@ export default {
       let citiesList = await axios
         .request(config)
         .then((res) => {
-          console.log(
-            "res.data.response.sources.items",
-            res.data.response.sources.items
-          );
           return res.data.response.sources.items;
         })
         .catch((error) => {
@@ -579,7 +575,6 @@ export default {
       this.cities = result;
     },*/
     getClickCoords(eventData) {
-      console.log('eventData', eventData);
       let lat = eventData.latlng.lat;
       let lng = eventData.latlng.lng;
       let selectMap = this.mapRegions.find(
