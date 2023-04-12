@@ -22,97 +22,54 @@
       <div id="map-wrap" style="weight: 800px; height: 700px">
         <client-only>
           <!--  doubleClickZoom: false,   -->
-          <LMap
-            :zoom="selectedMap.zoom"
-            :center="selectedMap.center"
-            @click="getClickCoords($event)"
-            :options="{
-              doubleClickZoom: true,
-              zoomControl: true,
-              touchZoom: true,
-              scrollWheelZoom: true,
-              dragging: true,
-            }"
-          >
-            <LTileLayer
-              :url="url"
-              :attribution="attribution"
-              :bounds="selectedMap.bounds"
-              :opacity="1"
-            />
-            <LImageOverlay
-              :url="'/images/svg/' + selectedMap.mapURL + '.svg'"
-              :bounds="selectedMap.bounds"
-              crs="L.CRS.EPSG4326"
-              :opacity="0.5"
-            />
+          <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)" :options="{
+            doubleClickZoom: true,
+            zoomControl: true,
+            touchZoom: true,
+            scrollWheelZoom: true,
+            dragging: true,
+          }">
+            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
+            <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
+              crs="L.CRS.EPSG4326" :opacity="0.5" />
             <LControl position="topleft">
-              <LeftControlList
-                v-show="this.dayInfo !== 'week'"
-                :list="listData"
-                @selectControlButtons="onSelectControlButtons"
-              />
-              <LeftControlWeekList
-                v-show="this.dayInfo === 'week'"
-                @selectControlWeekButtons="onSelectControlWeekButtons"
-              />
+              <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
+                @selectControlButtons="onSelectControlButtons" />
+              <LeftControlWeekList v-show="this.dayInfo === 'week'"
+                @selectControlWeekButtons="onSelectControlWeekButtons" />
             </LControl>
             <LControl>
               <div class="map-buttons">
-                <button
-                  :class="'forecasts-button ' + activeForecastsButton"
-                  @click="setViewData('forecasts')"
-                >
+                <button :class="'forecasts-button ' + activeForecastsButton" @click="setViewData('forecasts')">
                   Прогноз
                 </button>
-                <button
-                  :class="'wind-button ' + activeWindButton"
-                  @click="setViewData('wind')"
-                >
+                <button :class="'wind-button ' + activeWindButton" @click="setViewData('wind')">
                   Ветер
                 </button>
               </div>
             </LControl>
-            <div v-if="cities.length">
+            <div v-if="cities">
               <div v-for="city in cities" :key="city.id">
                 <div>
-                  <LMarker
-                    :lat-lng="[city.coords.latitude, city.coords.longitude]"
-                    :options="{ interactive: true }"
-                    @click="getClickCoords($event)"
-                  >
-                    <LIcon
-                      :icon-size="dynamicSize"
-                      :icon-anchor="dynamicAnchor"
-                    >
-                      <InfoBlock
-                        :viewData="viewData"
-                        :city="city.info[dayIndex].day"
-                      />
+                  <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]" :options="{ interactive: true }"
+                    @click="getClickCoords($event)">
+                    <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
+                      <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" />
                     </LIcon>
-                    <LTooltip
-                      :options="{ direction: 'bottom', interactive: true }"
-                      @click="getClickCoords($event)"
-                    >
+                    <LTooltip :options="{ direction: 'bottom', interactive: true }" @click="getClickCoords($event)">
                       <template>
                         <div class="tooltip-bg">
                           <div class="title">{{ city.title }}</div>
                           <div class="info">
                             <template>
-                              <InfoBlock
-                                :viewData="viewData"
-                                :city="city.info[dayIndex].day"
-                                :tooltip="'tooltip'"
-                              />
+                              <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" :tooltip="'tooltip'" />
                             </template>
                             <p class="min-max-info">
                               Min:
-                              <span class="blue-text"
-                                >{{ city.info[dayIndex].day.forecasts.min }}°
+                              <span class="blue-text">{{ city.info[dayIndex].day.forecasts.min }}°
                               </span>
                               Max:
-                              <span class="orange-text"
-                                >{{ city.info[dayIndex].day.forecasts.max }}°
+                              <span class="orange-text">{{ city.info[dayIndex].day.forecasts.max }}°
                               </span>
                             </p>
                           </div>
@@ -193,8 +150,8 @@ export default {
         id: 1,
         mapURL: "russia11.04",
         bounds: [
-        [84.9468706507159, 15.154433208465578],
-        [14.059857186546209, 195.04687070846558]
+          [84.9468706507159, 15.154433208465578],
+          [14.059857186546209, 195.04687070846558]
         ],
         title: "Россия",
         center: [40.83043687764923, 82.76000976562501],
@@ -421,63 +378,64 @@ export default {
       let settingJson = await this.getSettingJson(this.selectedMap.mapURL);
       let sid = settingJson.sources.towns;
       let dst = settingJson.dataseries.forecasts;
-      let citiesInfo = await this.getDataSetting(sid, dst);
-      this.cities = citiesInfo;
-
+      this.cities = await this.getDataseriesCity(sid, dst);
     },
-    async getDataSetting(sid, dst) {
-      const axios = require("axios");
-      let data = JSON.stringify({
-        sid: sid,
-      });
-      let config = {
-        method: "post",
-        maxBodyLength: Infinity,
-        url: "https://dcc5.modext.ru:8088/dataserver/api/v2/sources/list",
-        headers: {
-          "X-Ticket": "ST-test",
-          "Content-Type": "application/json",
-          Authorization: "Basic Og==",
-        },
-        data: data,
-      };
-
-      let citiesList = await axios
-        .request(config)
-        .then((res) => {
-          return res.data.response.sources.items;
-        })
-        .catch((error) => {
-          console.log(error);
+    /*  async getDataSetting(sid, dst) {
+        const axios = require("axios");
+        let data = JSON.stringify({
+          sid: sid,
         });
+        let config = {
+          method: "post",
+          maxBodyLength: Infinity,
+          url: "https://dcc5.modext.ru:8088/dataserver/api/v2/sources/list",
+          headers: {
+            "X-Ticket": "ST-test",
+            "Content-Type": "application/json",
+            Authorization: "Basic Og==",
+          },
+          data: data,
+        };
+  
+        let citiesList = await axios
+          .request(config)
+          .then((res) => {
+            return res.data.response.sources.items;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+  
+        return await this.makeCitiesInfo(citiesList, dst); //name, sid, cityInfo (coords, info)
+      },*/
+    /*  async makeCitiesInfo(sid, dst) {
+     let result = [];
+     let number = 0;
 
-      return await this.makeCitiesInfo(citiesList, dst); //name, sid, cityInfo (coords, info)
-    },
-    async makeCitiesInfo(citiesList, dst) {
-      let result = [];
-      let number = 0;
-
-      for (const item of citiesList) {
-
-        let cityInfo = await this.getDataseriesCity(item.sid, dst);
-        if (cityInfo !== null) {
-          result.push({
-          id: number,
-          title: item.name,
-          coords: cityInfo.coords,
-          info: cityInfo.info,
-          sid: item.sid,
-          nameStation: cityInfo.nameStation
-        });
-        number++;
-        }
-      }
-      return result;
-    },
+     let citiesList = await this.getDataseriesCity(sid, dst);
+     console.log('citiesList', citiesList)
+  for (const item of citiesList) {
+       let cityInfo = item.data.response.sources.items
+      if (citiesList !== null) {
+         result.push({
+         id: number,
+         title: item.name,
+         coords: cityInfo.coords,
+         info: cityInfo.info,
+         sid: item.sid,
+         nameStation: cityInfo.nameStation
+       });
+       number++;
+       console.log('cityInfo', cityInfo)
+       }
+       
+     }
+     return result;
+   },*/
     async getDataseriesCity(sid, dst) {
       const axios = require("axios");
       let data = JSON.stringify({
-        sid: [sid],
+        sid: sid,
         dst: [dst],
       });
 
@@ -491,32 +449,40 @@ export default {
         },
         data: data,
       };
-
+      console.log('config', config)
       return await axios
         .request(config)
         .then((response) => {
-
-          return response.data.response.dataseries.items.length
-            ? response.data.response.dataseries.items[0].lastData.cv
-            : null 
+          return response.data.response.dataseries.items
         })
-        .then((fetchData) => {
-          if (fetchData !== null && fetchData.frcDay.length) {
-            let info = fetchData.frcDay?.map(
-              (itemInfo) => this.createItemDayInfo(itemInfo) //массив данных о погоде в этом городе
-            );
-            let itemCity = {
-              coords: {
-                latitude: fetchData.stLat,
-                longitude: fetchData.stLon,
-              },
-              nameStation: fetchData.stName,
-              info: info,
-            };
-            return itemCity;
-          } else {
-            return null;
+        .then((citiesList) => {
+          let number = 0;
+          let result = [];
+          for (const itemCity of citiesList) {
+            let fetchData = itemCity.lastData.cv
+            if (fetchData) {
+              let info = fetchData.frcDay?.map(
+                (itemInfo) => this.createItemDayInfo(itemInfo) //массив данных о погоде в этом городе
+              );
+              let itemCity = {
+                coords: {
+                  latitude: fetchData.stLat,
+                  longitude: fetchData.stLon,
+                },
+                nameStation: fetchData.stName,
+                info: info,
+              };
+              result.push({
+                id: number,
+                title: itemCity.nameStation,
+                coords: itemCity.coords,
+                info: itemCity.info,
+                sid: itemCity.sid
+              })
+              number++;
+            }
           }
+          return result
         })
         .catch((error) => {
           console.log(error);
@@ -575,7 +541,7 @@ export default {
       this.cities = result;
     },*/
     getClickCoords(eventData) {
-      console.log( eventData.latlng.lat, eventData.latlng.lng )
+      console.log(eventData.latlng.lat, eventData.latlng.lng)
       let lat = eventData.latlng.lat;
       let lng = eventData.latlng.lng;
       let selectMap = this.mapRegions.find(
@@ -586,7 +552,7 @@ export default {
           lng < item.bounds[1][1]
       );
       if (selectMap !== undefined) {
-         this.selectedMapId = selectMap.id
+        this.selectedMapId = selectMap.id
       }
     },
     setDay(day) {
