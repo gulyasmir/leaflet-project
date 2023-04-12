@@ -195,8 +195,6 @@ export default {
         bounds: [
         [84.9468706507159, 15.154433208465578],
         [14.059857186546209, 195.04687070846558]
-         // [84.97164568510132, 17.15624570846558],       
-         // [15.758421993674277, 195.04687070846558],
         ],
         title: "Россия",
         center: [40.83043687764923, 82.76000976562501],
@@ -462,9 +460,9 @@ export default {
     async makeCitiesInfo(citiesList, dst) {
       let result = [];
       let number = 0;
-      console.log('========== Проходим список городов =================');
+
       for (const item of citiesList) {
-        console.log('-------------------', item.name, " - ", item.sid, ' --------------------------');
+
         let cityInfo = await this.getDataseriesCity(item.sid, dst);
         if (cityInfo !== null) {
           result.push({
@@ -485,8 +483,6 @@ export default {
       let data = JSON.stringify({
         sid: [sid],
         dst: [dst],
-        // "srctid": ["SRC_TYP_METPLACE"],
-        // "urn": [ "RHM-DATA-HMC-FORECAST"]
       });
 
       let config = {
@@ -499,19 +495,17 @@ export default {
         },
         data: data,
       };
-      console.log("getDataseriesList config", config);
 
       return await axios
         .request(config)
         .then((response) => {
-          console.log("response.data.response.dataseries.items", response.data.response.dataseries.items);
+
           return response.data.response.dataseries.items.length
             ? response.data.response.dataseries.items[0].lastData.cv
-            : null //this.fakeData;
+            : null 
         })
         .then((fetchData) => {
           if (fetchData !== null && fetchData.frcDay.length) {
-            console.log("fetchData", fetchData);
             let info = fetchData.frcDay?.map(
               (itemInfo) => this.createItemDayInfo(itemInfo) //массив данных о погоде в этом городе
             );
@@ -523,7 +517,6 @@ export default {
               nameStation: fetchData.stName,
               info: info,
             };
-            console.log("itemCity", itemCity);
             return itemCity;
           } else {
             return null;
@@ -586,7 +579,7 @@ export default {
       this.cities = result;
     },*/
     getClickCoords(eventData) {
-      console.log(eventData.latlng.lat, eventData.latlng.lng);
+      console.log('eventData', eventData);
       let lat = eventData.latlng.lat;
       let lng = eventData.latlng.lng;
       let selectMap = this.mapRegions.find(
@@ -597,7 +590,7 @@ export default {
           lng < item.bounds[1][1]
       );
       if (selectMap !== undefined) {
-        // this.selectedMapId = selectMap.id
+         this.selectedMapId = selectMap.id
       }
     },
     setDay(day) {
