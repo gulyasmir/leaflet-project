@@ -575,6 +575,7 @@ export default {
       this.cities = result;
     },*/
     getClickCoords(eventData) {
+      console.log( eventData.latlng.lat, eventData.latlng.lng )
       let lat = eventData.latlng.lat;
       let lng = eventData.latlng.lng;
       let selectMap = this.mapRegions.find(
