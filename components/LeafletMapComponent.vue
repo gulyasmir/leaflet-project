@@ -25,7 +25,7 @@
           <LMap
             :zoom="selectedMap.zoom"
             :center="selectedMap.center"
-            @click="getClickCoords($event)"
+
             :options="{
               doubleClickZoom: true,
               zoomControl: true,
