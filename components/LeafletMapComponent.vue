@@ -25,7 +25,7 @@
           <LMap
             :zoom="selectedMap.zoom"
             :center="selectedMap.center"
-
+            @click="getClickCoords($event)"
             :options="{
               doubleClickZoom: true,
               zoomControl: true,
@@ -96,7 +96,7 @@
                     >
                       <template>
                         <div class="tooltip-bg">
-                          <div class="title">{{ city.nameStation }}</div>
+                          <div class="title">{{ city.title }}</div>
                           <div class="info">
                             <template>
                               <InfoBlock
