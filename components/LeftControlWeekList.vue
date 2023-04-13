@@ -12,9 +12,7 @@
         <ul class="time-list panel" :style="getDayStyle(itemDay.id)">
           <li v-for="itemTime in itemDay.listTime" :key="itemTime.id">
             <span
-              @click="
-                selectTime(itemDay.id, itemTime.timeInfo,  $event)
-              "
+              @click="selectTime(itemDay.id, itemTime.timeInfo, $event)"
               :class="timeItemClass(itemDay.id, itemTime.id)"
             >
               {{ itemTime.title }}
@@ -30,8 +28,8 @@ export default {
   name: "LeftConrolWeekList",
   data() {
     return {
-      isNow:false
-    }
+      isNow: false,
+    };
   },
   methods: {
     getDayClass(id) {
@@ -43,22 +41,19 @@ export default {
       }
     },
     removeClassNow() {
-      let elements = document.getElementsByClassName('time')
-     
+      let elements = document.getElementsByClassName("time");
       if (elements) {
         Array.from(elements).forEach((element) => {
-        element.classList.remove("now");
-      });
+          element.classList.remove("now");
+        });
       }
-       
     },
     selectTime(dayIndex, timeInfo, event) {
       if (event) {
-        this.removeClassNow()
+        this.removeClassNow();
         event.target.className += " now";
-       
       }
-      
+
       this.$emit("selectControlWeekButtons", {
         dayIndex: dayIndex,
         timeInfo: timeInfo,

@@ -2,10 +2,10 @@
   <div class="list-data">
     <ul>
       <li v-for="itemDay in list" :key="itemDay.id">
-        <div @click="selectTime(itemDay.dayInfo, 'day')" class="accordion">{{ itemDay.day }}</div>
-        <ul class="time-list panel">
+        <div @click="selectTime(itemDay.dayInfo, 'day')"  :class="getDayClass(itemDay.id)">{{ itemDay.day }}</div>
+        <ul class="time-list panel" :style="getDayStyle(itemDay.id)">
           <li v-for="itemTime in itemDay.listTime" :key="itemTime.id">
-            <span @click="selectTime(itemDay.dayInfo,itemTime.timeInfo)" :class="timeItemClass(itemDay.date, itemTime.id)">
+            <span @click="selectTime(itemDay.dayInfo,itemTime.timeInfo, $event)" :class="timeItemClass(itemDay.dayInfo, itemTime.id)">
               {{ itemTime.title }}
             </span>
           </li>
@@ -21,7 +21,7 @@ export default {
     return{
      list:  [
         {
-          id: 1,
+          id: 0,
           day: "Сегодня",
           dayInfo: "today",
           listTime: [
@@ -38,7 +38,7 @@ export default {
           ],
         },
         {
-          id: 2,
+          id: 1,
           day: "Завтра",
           dayInfo: "tomorrow",
           listTime: [
@@ -62,19 +62,36 @@ export default {
 
   },
   methods: {
-    selectTime(dayInfo, timeInfo){
+    getDayClass(id) {
+      return id === 0 ? "accordion active" : "accordion";
+    },
+    getDayStyle(id) {
+      if (id === 0) {
+        return "display:block";
+      }
+    },
+    removeClassNow() {
+      let elements = document.getElementsByClassName("time");
+      if (elements) {
+        Array.from(elements).forEach((element) => {
+          element.classList.remove("now");
+        });
+      }
+    },
+    selectTime(dayInfo, timeInfo, event){
+      if (event) {
+        this.removeClassNow();
+        event.target.className += " now";
+      }
       this.$emit('selectControlButtons', {
               dayInfo: dayInfo,
               timeInfo: timeInfo
             })
     },
     timeItemClass(itemDay, itemTime) {
-      console.log('list', this.list)
-      console.log("itemDay", itemDay)
-      console.log('itemTime', itemTime)
       let Data = new Date();
       let className = "time";
-      if (itemDay === Data.getDate().toString()) {
+      if (itemDay === 'today') {
         if (Data.getHours() > 9 && Data.getHours() < 21 && itemTime === 1) {
           className = "time now";
         }
@@ -135,9 +152,10 @@ export default {
 
 .time.now {
   color: #db0084;
-  font-weight: 550;
 }
-
+.active {
+  color: #db0084;
+}
 .accordion {
   cursor: pointer;
   transition: 0.4s;
