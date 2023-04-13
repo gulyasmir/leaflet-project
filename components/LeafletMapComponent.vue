@@ -25,7 +25,7 @@
             zoomControl: false,
             touchZoom: false,
             scrollWheelZoom: false,
-            dragging: true,
+            dragging: false,
             zoomSnap:0.1,
             zoomDelta:0.1
           }">
