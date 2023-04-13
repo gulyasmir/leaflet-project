@@ -15,6 +15,6 @@ export default {
 .map {
   width: 800px;
   height: 700px;
-  padding: 1% 30%;
+  padding: 0 30%;
 }
 </style>

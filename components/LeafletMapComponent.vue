@@ -1,4 +1,3 @@
-<!-- Please remove this file from your project -->
 <template>
   <div class="map-component">
     <div v-if="reload" class="full">
@@ -21,21 +20,20 @@
       </div>
       <div id="map-wrap" style="weight: 800px; height: 700px">
         <client-only>
-          <!--  doubleClickZoom: false,   -->
           <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)" :options="{
-            doubleClickZoom: true,
-            zoomControl: true,
-            touchZoom: true,
-            scrollWheelZoom: true,
-            dragging: true,
+            doubleClickZoom: false,
+            zoomControl: false,
+            touchZoom: false,
+            scrollWheelZoom: false,
+            dragging: false,
             zoomSnap:0.1,
             zoomDelta:0.1
           }">
-            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
+            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0" />
             <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
-              crs="L.CRS.EPSG4326" :opacity="0.5" />
+              crs="L.CRS.EPSG4326" :opacity="1" />
             <LControl position="topleft">
-              <LeftControlList v-show="this.dayInfo !== 'week'" :list="listData"
+              <LeftControlList v-show="this.dayInfo !== 'week'"
                 @selectControlButtons="onSelectControlButtons" />
               <LeftControlWeekList v-show="this.dayInfo === 'week'"
                 @selectControlWeekButtons="onSelectControlWeekButtons" />
@@ -96,7 +94,7 @@
           Вернуться на карту России
         </button>
       </div>
-      {{ selectedMap }}
+    
     </div>
   </div>
 </template>
@@ -118,7 +116,6 @@ import InfoBlock from "./InfoBlock";
 import LeftControlList from "./LeftControlList";
 import LeftControlWeekList from "./LeftControlWeekList";
 import ChoroplethLayerComponent from "./ChoroplethLayerComponent";
-import maps from "../static/json/map-regions.json";
 import forecastStationsJson from "../static/json/forecast_stations.json";
 import mapsJson from "../static/json/maps-full.json";
 
@@ -150,16 +147,16 @@ export default {
 
       selectedMap: {
         id: 1,
-        mapURL: "russia11.04",
+        mapURL: "mapRUS",
         bounds: [
           [84.9468706507159, 15.154433208465578],
           [14.059857186546209, 195.04687070846558]
         ],
         title: "Россия",
-        center: [40.83043687764923, 82.76000976562501],
-        zoom: 2,
+        center: [66.58846086608366, 105.65947415779038
+],
+        zoom: 2.7,
       },
-      mapRegions: maps.maps,
       reload: false,
       selectedMapId: 1,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -172,132 +169,10 @@ export default {
       activeWindButton: "",
       dayInfo: "today",
       timeInfo: "day",
-      dayIndex: 0,
-      listData: [
-        {
-          id: 1,
-          day: "Сегодня",
-          dayInfo: "today",
-          listTime: [
-            {
-              id: 1,
-              title: "День",
-              timeInfo: "day",
-            },
-            {
-              id: 2,
-              title: "Ночь",
-              timeInfo: "night",
-            },
-          ],
-        },
-        {
-          id: 2,
-          day: "Завтра",
-          dayInfo: "tomorrow",
-          listTime: [
-            {
-              id: 1,
-              title: "День",
-              timeInfo: "day",
-            },
-            {
-              id: 2,
-              title: "Ночь",
-              timeInfo: "night",
-            },
-          ],
-        },
-      ],
-      fakeData: {
-        frcDay: [
-          {
-            dayPrec: 0.5,
-            dayPrs: 754,
-            dayWCode: 27,
-            dayWD: 10,
-            dayWS: 1,
-            frcDate: "2023-01-08",
-            maxTemp: -37,
-            minTemp: -45,
-            ngtPrec: 0,
-            ngtPrs: 754,
-            ngtWCode: 25,
-            ngtWD: 20,
-            ngtWS: 1,
-          },
-          {
-            dayPrec: 0.2,
-            dayPrs: 753,
-            dayWCode: 26,
-            dayWD: 20,
-            dayWS: 1,
-            frcDate: "2023-01-09",
-            maxTemp: -36,
-            minTemp: -38,
-            ngtPrec: 0.3,
-            ngtPrs: 754,
-            ngtWCode: 27,
-            ngtWD: 130,
-            ngtWS: 0,
-          },
-          {
-            dayPrec: 0.7,
-            dayPrs: 748,
-            dayWCode: 26,
-            dayWD: 40,
-            dayWS: 2,
-            frcDate: "2023-01-10",
-            maxTemp: -31,
-            minTemp: -46,
-            ngtPrec: 0.1,
-            ngtPrs: 752,
-            ngtWCode: 25,
-            ngtWD: 10,
-            ngtWS: 2,
-          },
-          {
-            dayPrec: 0.1,
-            dayPrs: 750,
-            dayWCode: 25,
-            dayWD: 310,
-            dayWS: 2,
-            frcDate: "2023-01-11",
-            maxTemp: -31,
-            minTemp: -33,
-            ngtPrec: 0.5,
-            ngtPrs: 746,
-            ngtWCode: 26,
-            ngtWD: 50,
-            ngtWS: 2,
-          },
-          {
-            dayPrec: 0.1,
-            dayPrs: 759,
-            dayWCode: 25,
-            dayWD: 270,
-            dayWS: 3,
-            frcDate: "2023-01-15",
-            maxTemp: -46,
-            minTemp: -46,
-            ngtPrec: 0,
-            ngtPrs: 761,
-            ngtWCode: 3,
-            ngtWD: 280,
-            ngtWS: 2,
-          },
-        ],
-        stHgt: "100.72",
-        stIndex: "24959",
-        stLat: "62.01667",
-        stLon: "129.71667",
-        stName: "Якутск",
-        timeZone: "Local",
-      },
+      dayIndex: 0
     };
   },
   mounted() {
-    // this.getData(this.forecastStations)
     this.getStart();
   },
   methods: {
@@ -382,58 +257,6 @@ export default {
       let dst = settingJson.dataseries.forecasts;
       this.cities = await this.getDataseriesCity(sid, dst);
     },
-    /*  async getDataSetting(sid, dst) {
-        const axios = require("axios");
-        let data = JSON.stringify({
-          sid: sid,
-        });
-        let config = {
-          method: "post",
-          maxBodyLength: Infinity,
-          url: "https://dcc5.modext.ru:8088/dataserver/api/v2/sources/list",
-          headers: {
-            "X-Ticket": "ST-test",
-            "Content-Type": "application/json",
-            Authorization: "Basic Og==",
-          },
-          data: data,
-        };
-  
-        let citiesList = await axios
-          .request(config)
-          .then((res) => {
-            return res.data.response.sources.items;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-  
-        return await this.makeCitiesInfo(citiesList, dst); //name, sid, cityInfo (coords, info)
-      },*/
-    /*  async makeCitiesInfo(sid, dst) {
-     let result = [];
-     let number = 0;
-
-     let citiesList = await this.getDataseriesCity(sid, dst);
-     console.log('citiesList', citiesList)
-  for (const item of citiesList) {
-       let cityInfo = item.data.response.sources.items
-      if (citiesList !== null) {
-         result.push({
-         id: number,
-         title: item.name,
-         coords: cityInfo.coords,
-         info: cityInfo.info,
-         sid: item.sid,
-         nameStation: cityInfo.nameStation
-       });
-       number++;
-       console.log('cityInfo', cityInfo)
-       }
-       
-     }
-     return result;
-   },*/
     async getDataseriesCity(sid, dst) {
       const axios = require("axios");
       let data = JSON.stringify({
@@ -451,7 +274,6 @@ export default {
         },
         data: data,
       };
-      console.log('config', config)
       return await axios
         .request(config)
         .then((response) => {
@@ -490,63 +312,10 @@ export default {
           console.log(error);
         });
     },
-    /*
-    async getData(forecastStations) {
-      console.log("forecastStations", forecastStations);
-      const result = [];
-      let idCity = 0;
-      for (const item of forecastStations) {
-        const axios = require("axios");
-        let data = JSON.stringify({
-          sid: [item.sid],
-          dst: ["FRC-WTH-DATA-XXXXXXXXXXX"],
-        });
-
-        let config = {
-          method: "post",
-          maxBodyLength: Infinity,
-          url: "https://dcc5.modext.ru:8088/dataserver/api/v2/dataseries/list?flag=lastdata",
-          headers: {
-            "X-Ticket": "ST-test",
-            "Content-Type": "application/json",
-            Authorization: "Basic Og==",
-          },
-          data: data,
-        };
-
-        axios
-          .request(config)
-          .then((response) => {
-            return response.data.response.dataseries.items[0].lastData.cv
-              .frcDay;
-          })
-          .then((fetchData) => {
-            let info = fetchData?.map((itemInfo) =>
-              this.createItemDayInfo(itemInfo)
-            );
-            let itemCity = {
-              id: idCity,
-              title: item.name,
-              coords: {
-                latitude: item.loc.lat,
-                longitude: item.loc.lon,
-              },
-              info: info,
-            };
-            result.push(itemCity);
-            idCity++;
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-      this.cities = result;
-    },*/
     getClickCoords(eventData) {
-      console.log(eventData.latlng.lat, eventData.latlng.lng)
       let lat = eventData.latlng.lat;
       let lng = eventData.latlng.lng;
-      let selectMap = this.mapRegions.find(
+      let selectMap = this.maps.find(
         (item) =>
           lat < item.bounds[0][0] &&
           lat > item.bounds[1][0] &&

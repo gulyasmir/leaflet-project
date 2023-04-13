@@ -17,14 +17,49 @@
 <script>
 export default {
   name: "LeftConrolList",
-  props: {
-    list: {
-      type: Array,
-      defautl: [],
-    },
+  data(){
+    return{
+     list:  [
+        {
+          id: 1,
+          day: "Сегодня",
+          dayInfo: "today",
+          listTime: [
+            {
+              id: 1,
+              title: "День",
+              timeInfo: "day",
+            },
+            {
+              id: 2,
+              title: "Ночь",
+              timeInfo: "night",
+            },
+          ],
+        },
+        {
+          id: 2,
+          day: "Завтра",
+          dayInfo: "tomorrow",
+          listTime: [
+            {
+              id: 1,
+              title: "День",
+              timeInfo: "day",
+            },
+            {
+              id: 2,
+              title: "Ночь",
+              timeInfo: "night",
+            },
+          ],
+        },
+      ]
+    }
   },
   mounted() {
     this.openTimeList()
+
   },
   methods: {
     selectTime(dayInfo, timeInfo){
@@ -34,13 +69,16 @@ export default {
             })
     },
     timeItemClass(itemDay, itemTime) {
+      console.log('list', this.list)
+      console.log("itemDay", itemDay)
+      console.log('itemTime', itemTime)
       let Data = new Date();
       let className = "time";
       if (itemDay === Data.getDate().toString()) {
-        if (Data.getHours() < 12 && itemTime === 1) {
+        if (Data.getHours() > 9 && Data.getHours() < 21 && itemTime === 1) {
           className = "time now";
         }
-        if (Data.getHours() > 12 && itemTime === 2) {
+        if (Data.getHours() < 9 && Data.getHours() > 21 && itemTime === 2) {
           className = "time now";
         }
       }
