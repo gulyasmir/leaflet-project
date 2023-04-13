@@ -25,7 +25,7 @@
             zoomControl: false,
             touchZoom: false,
             scrollWheelZoom: false,
-            dragging: false,
+            dragging: true,
             zoomSnap:0.1,
             zoomDelta:0.1
           }">
@@ -54,7 +54,7 @@
                   <LMarker :lat-lng="[city.coords.latitude, city.coords.longitude]" :options="{ interactive: true }"
                     @click="getClickCoords($event)">
                     <LIcon :icon-size="dynamicSize" :icon-anchor="dynamicAnchor">
-                      <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" />
+                      <InfoBlock :viewData="viewData" :city="timeInfo === 'day' ? city.info[dayIndex].day : city.info[dayIndex].night" />
                     </LIcon>
                     <LTooltip :options="{ direction: 'bottom', interactive: true }" @click="getClickCoords($event)">
                       <template>
@@ -62,7 +62,7 @@
                           <div class="title">{{ city.title }}</div>
                           <div class="info">
                             <template>
-                              <InfoBlock :viewData="viewData" :city="city.info[dayIndex].day" :tooltip="'tooltip'" />
+                              <InfoBlock :viewData="viewData" :city="timeInfo === 'day' ? city.info[dayIndex].day : city.info[dayIndex].night" :tooltip="'tooltip'" />
                             </template>
                             <p class="min-max-info">
                               Min:
@@ -169,7 +169,8 @@ export default {
       activeWindButton: "",
       dayInfo: "today",
       timeInfo: "day",
-      dayIndex: 0
+      dayIndex: 0,
+      isDay:true
     };
   },
   mounted() {
@@ -296,6 +297,7 @@ export default {
                 nameStation: fetchData.stName,
                 info: info,
               };
+              console.log('itemCity', itemCity)
               result.push({
                 id: number,
                 title: itemCity.nameStation,
@@ -313,10 +315,12 @@ export default {
         });
     },
     getClickCoords(eventData) {
+      console.log(eventData.latlng.lat, eventData.latlng.lng)
       let lat = eventData.latlng.lat;
       let lng = eventData.latlng.lng;
       let selectMap = this.maps.find(
         (item) =>
+          item.id > 1 &&
           lat < item.bounds[0][0] &&
           lat > item.bounds[1][0] &&
           lng > item.bounds[0][1] &&
@@ -333,9 +337,10 @@ export default {
       });
       document.getElementById(day).classList.add("active");
       if (day !== "week") {
+        let timeInfo = this.isDay ? 'day' : 'night'
         let data = {
           dayInfo: day,
-          timeInfo: "day",
+          timeInfo: timeInfo,
         };
         this.onSelectControlButtons(data);
       } else {
@@ -347,10 +352,12 @@ export default {
       this.dayInfo = data.dayInfo;
       this.timeInfo = data.timeInfo;
       this.dayIndex = this.dayInfo === "today" ? 0 : 1;
+      this.isDay = this.timeInfo === 'day' ? true : false
     },
     onSelectControlWeekButtons(data) {
       this.dayIndex = data.dayIndex;
       this.timeInfo = data.timeInfo;
+      this.isDay = this.timeInfo === 'day' ? true : false
     },
     setMap(mapId) {
       this.selectedMap = this.maps.find(function (elem) {
