@@ -2,10 +2,18 @@
   <div class="list-data">
     <ul>
       <li v-for="itemDay in list" :key="itemDay.id">
-        <div @click="selectTime(itemDay.dayInfo, 'day')"  :class="getDayClass(itemDay.id)">{{ itemDay.day }}</div>
+        <div
+          @click="selectTime(itemDay.dayInfo, 'day')"
+          :class="getDayClass(itemDay.id)"
+        >
+          {{ itemDay.day }}
+        </div>
         <ul class="time-list panel" :style="getDayStyle(itemDay.id)">
           <li v-for="itemTime in itemDay.listTime" :key="itemTime.id">
-            <span @click="selectTime(itemDay.dayInfo,itemTime.timeInfo, $event)" :class="timeItemClass(itemDay.dayInfo, itemTime.id)">
+            <span
+              @click="selectTime(itemDay.dayInfo, itemTime.timeInfo, $event)"
+              :class="timeItemClass(itemDay.dayInfo, itemTime.id)"
+            >
               {{ itemTime.title }}
             </span>
           </li>
@@ -17,9 +25,9 @@
 <script>
 export default {
   name: "LeftConrolList",
-  data(){
-    return{
-     list:  [
+  data() {
+    return {
+      list: [
         {
           id: 0,
           day: "Сегодня",
@@ -54,12 +62,11 @@ export default {
             },
           ],
         },
-      ]
-    }
+      ],
+    };
   },
   mounted() {
-    this.openTimeList()
-
+    this.openTimeList();
   },
   methods: {
     getDayClass(id) {
@@ -78,20 +85,20 @@ export default {
         });
       }
     },
-    selectTime(dayInfo, timeInfo, event){
+    selectTime(dayInfo, timeInfo, event) {
       if (event) {
         this.removeClassNow();
         event.target.className += " now";
       }
-      this.$emit('selectControlButtons', {
-              dayInfo: dayInfo,
-              timeInfo: timeInfo
-            })
+      this.$emit("selectControlButtons", {
+        dayInfo: dayInfo,
+        timeInfo: timeInfo,
+      });
     },
     timeItemClass(itemDay, itemTime) {
       let Data = new Date();
       let className = "time";
-      if (itemDay === 'today') {
+      if (itemDay === "today") {
         if (Data.getHours() > 9 && Data.getHours() < 21 && itemTime === 1) {
           className = "time now";
         }
@@ -105,15 +112,15 @@ export default {
     openTimeList() {
       let acc = document.getElementsByClassName("accordion");
       let i;
-      acc[0].nextElementSibling.style.display = "block"
+      acc[0].nextElementSibling.style.display = "block";
       for (i = 0; i < acc.length; i++) {
         acc[i].addEventListener("click", function () {
-          this.classList.toggle("active")
-          var panel = this.nextElementSibling
+          this.classList.toggle("active");
+          var panel = this.nextElementSibling;
           if (panel.style.display === "block") {
-            panel.style.display = "none"
+            panel.style.display = "none";
           } else {
-            panel.style.display = "block"
+            panel.style.display = "block";
           }
         });
       }

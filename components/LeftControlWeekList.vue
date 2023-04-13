@@ -64,10 +64,10 @@ export default {
       let className = "time";
       if (itemDayId === 0) {
         if (Data.getHours() > 6 && Data.getHours() < 21 && itemTime === 1) {
-          className = "time active";
+          className = "time now";
         }
         if (Data.getHours() < 6 && Data.getHours() > 21 && itemTime === 2) {
-          className = "time active";
+          className = "time now";
         }
       }
       return className;
@@ -195,6 +195,15 @@ export default {
 .accordion {
   cursor: pointer;
   transition: 0.4s;
+}
+.time {
+  font-size: 13px;
+  font-weight: 500;
+  padding-left: 5px;
+}
+
+.time.now {
+  color: #db0084;
 }
 .active {
   color: #db0084;
