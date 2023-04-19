@@ -1,38 +1,46 @@
 <template>
-  <div class="map-component">
-    <div v-if="reload" class="full">
-      <div class="loader-ring">
-        <div class="loader-ring-light"></div>
-        <div class="loader-ring-track"></div>
-      </div>
-    </div>
-    <div v-else class="full">
-      <div class="control-buttons">
-        <button id="today" class="day-button active" @click="setDay('today')">
-          Сегодня
-        </button>
-        <button id="tomorrow" class="day-button" @click="setDay('tomorrow')">
-          Завтра
-        </button>
-        <button id="week" class="day-button" @click="setDay('week')">
-          На неделю
-        </button>
-      </div>
-      <div id="map-wrap" style="weight: 800px; height: 700px">
-        <client-only>
-          <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)" :options="{
-            doubleClickZoom: true,
-            zoomControl: true,
-            touchZoom: true,
-            scrollWheelZoom: true,
-            dragging: true,
-            zoomSnap:0.1,
-            zoomDelta:0.1
-          }">
-            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
-            <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
-              crs="L.CRS.EPSG4326" :opacity="0" />
-           <!--  <LControl position="topleft">
+  <div class="full-page">
+    <div>
+    <p>координаты:</p>
+    <p>
+      {{ this.clickCoords }}
+    </p>
+  </div>
+    <div class="map">
+      <div class="map-component">
+        <div v-if="reload" class="full">
+          <div class="loader-ring">
+            <div class="loader-ring-light"></div>
+            <div class="loader-ring-track"></div>
+          </div>
+        </div>
+        <div v-else class="full">
+          <div class="control-buttons">
+            <button id="today" class="day-button active" @click="setDay('today')">
+              Сегодня
+            </button>
+            <button id="tomorrow" class="day-button" @click="setDay('tomorrow')">
+              Завтра
+            </button>
+            <button id="week" class="day-button" @click="setDay('week')">
+              На неделю
+            </button>
+          </div>
+          <div id="map-wrap" style="weight: 800px; height: 700px">
+            <client-only>
+              <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)" :options="{
+                doubleClickZoom: true,
+                zoomControl: true,
+                touchZoom: true,
+                scrollWheelZoom: true,
+                dragging: true,
+                zoomSnap: 0.1,
+                zoomDelta: 0.1
+              }">
+                <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
+                <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
+                  crs="L.CRS.EPSG4326" :opacity="0" />
+                <!--  <LControl position="topleft">
               <LeftControlList v-show="this.dayInfo !== 'week'"
                 @selectControlButtons="onSelectControlButtons" />
               <LeftControlWeekList v-show="this.dayInfo === 'week'"
@@ -81,21 +89,23 @@
               </div>
             </div>
             -->
-          </LMap>
-        </client-only>
-      </div>
-      <div class="control-buttons">
-        <select v-model="selectedMapId">
-          <option value="0">--Выберите место--</option>
-          <option v-for="map in maps" v-bind:value="map.id">
-            {{ map.title }}
-          </option>
-        </select>
-        <button v-if="selectedMapId > 1" @click="selectedMapId = 1">
-          Вернуться на карту России
-        </button>
-      </div>
+              </LMap>
+            </client-only>
+          </div>
+          <div class="control-buttons">
+            <select v-model="selectedMapId">
+              <option value="0">--Выберите место--</option>
+              <option v-for="map in maps" v-bind:value="map.id">
+                {{ map.title }}
+              </option>
+            </select>
+            <button v-if="selectedMapId > 1" @click="selectedMapId = 1">
+              Вернуться на карту России
+            </button>
 
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -155,7 +165,7 @@ export default {
         ],
         title: "Россия",
         center: [66.58846086608366, 105.65947415779038
-],
+        ],
         zoom: 2.7,
       },
       reload: false,
@@ -171,7 +181,8 @@ export default {
       dayInfo: "today",
       timeInfo: "day",
       dayIndex: 0,
-      isDay:true
+      isDay: true,
+      clickCoords: ''
     };
   },
   mounted() {
@@ -250,7 +261,7 @@ export default {
     async getSettingJson() {
       const axios = require("axios");
       return axios
-        .get("/json/settings/setting-"+ this.selectedMap.mapURL + ".json")
+        .get("/json/settings/setting-" + this.selectedMap.mapURL + ".json")
         .then((res) => res.data);
     },
     async getStart() {
@@ -316,6 +327,7 @@ export default {
         });
     },
     getClickCoords(eventData) {
+      this.clickCoords = eventData.latlng.lat + ', ' + eventData.latlng.lng
       console.log(eventData.latlng.lat, eventData.latlng.lng)
       let lat = eventData.latlng.lat;
       let lng = eventData.latlng.lng;
@@ -328,7 +340,7 @@ export default {
           lng < item.bounds[1][1]
       );
       if (selectMap !== undefined) {
-        this.selectedMapId = selectMap.id
+        //  this.selectedMapId = selectMap.id
       }
     },
     setDay(day) {
@@ -399,6 +411,18 @@ export default {
 </script>
 
 <style>
+.full-page {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.map {
+  width: 800px;
+  height: 700px;
+  padding: 0 3%;
+}
+
 @keyframes rotate-360 {
   from {
     -webkit-transform: rotate(0);
