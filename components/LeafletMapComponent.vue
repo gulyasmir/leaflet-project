@@ -21,18 +21,18 @@
       <div id="map-wrap" style="weight: 800px; height: 700px">
         <client-only>
           <LMap :zoom="selectedMap.zoom" :center="selectedMap.center" @click="getClickCoords($event)" :options="{
-            doubleClickZoom: false,
-            zoomControl: false,
-            touchZoom: false,
-            scrollWheelZoom: false,
-            dragging: false,
+            doubleClickZoom: true,
+            zoomControl: true,
+            touchZoom: true,
+            scrollWheelZoom: true,
+            dragging: true,
             zoomSnap:0.1,
             zoomDelta:0.1
           }">
-            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="0" />
+            <LTileLayer :url="url" :attribution="attribution" :bounds="selectedMap.bounds" :opacity="1" />
             <LImageOverlay :url="'/images/svg/' + selectedMap.mapURL + '.svg'" :bounds="selectedMap.bounds"
-              crs="L.CRS.EPSG4326" :opacity="1" />
-            <LControl position="topleft">
+              crs="L.CRS.EPSG4326" :opacity="0" />
+           <!--  <LControl position="topleft">
               <LeftControlList v-show="this.dayInfo !== 'week'"
                 @selectControlButtons="onSelectControlButtons" />
               <LeftControlWeekList v-show="this.dayInfo === 'week'"
@@ -80,6 +80,7 @@
                 </div>
               </div>
             </div>
+            -->
           </LMap>
         </client-only>
       </div>
@@ -94,7 +95,7 @@
           Вернуться на карту России
         </button>
       </div>
-    
+
     </div>
   </div>
 </template>
