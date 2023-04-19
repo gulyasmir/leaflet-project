@@ -249,7 +249,7 @@ export default {
     async getSettingJson() {
       const axios = require("axios");
       return axios
-        .get("http://localhost:8080/download/setting-"+ this.selectedMap.mapURL + ".json")
+        .get("https://server-leaflet.herokuapp.com/download/setting-"+ this.selectedMap.mapURL + ".json")
         .then((res) => res.data);
     },
     async getStart() {
