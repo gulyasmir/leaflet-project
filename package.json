@@ -10,14 +10,16 @@
     "heroku-postbuild": "npm run build"
   },
   "engines": {
-    "node": "18.14.2", 
+    "node": "18.14.2",
     "npm": "9.6.2"
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "@types/leaflet": "^1.9.3",
     "core-js": "^3.25.3",
+    "express": "^4.18.2",
     "leaflet": "^1.9.3",
+    "multer": "^1.4.5-lts.1",
     "nuxt": "^2.15.8",
     "vue": "^2.7.10",
     "vue-choropleth": "^0.3.1",
@@ -25,7 +27,5 @@
     "vue-template-compiler": "^2.7.10",
     "vue2-leaflet": "^2.7.1"
   },
-  "devDependencies": {
-   
-  }
+  "devDependencies": {}
 }

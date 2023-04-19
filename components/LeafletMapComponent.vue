@@ -249,7 +249,7 @@ export default {
     async getSettingJson() {
       const axios = require("axios");
       return axios
-        .get("/json/settings/setting-"+ this.selectedMap.mapURL + ".json")
+        .get("/upload/settings/setting-"+ this.selectedMap.mapURL + ".json")
         .then((res) => res.data);
     },
     async getStart() {
