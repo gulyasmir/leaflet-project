@@ -303,7 +303,7 @@ export default {
                 nameStation: fetchData.stName,
                 info: info,
               };
-              console.log('itemCity', itemCity)
+         
               result.push({
                 id: number,
                 title: itemCity.nameStation,
