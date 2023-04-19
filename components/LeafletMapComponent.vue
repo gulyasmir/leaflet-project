@@ -246,10 +246,10 @@ export default {
       };
       return itemDayInfo;
     },
-    async getSettingJson(title) {
+    async getSettingJson() {
       const axios = require("axios");
       return axios
-        .get("/json/settings/setting-mapRUSnew.json")
+        .get("/json/settings/setting-"+ this.selectedMap.mapURL + ".json")
         .then((res) => res.data);
     },
     async getStart() {
