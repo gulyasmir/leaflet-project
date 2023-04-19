@@ -19,7 +19,7 @@
       />
 
       <label for="assetsFieldHandle" class="block cursor-pointer">
-        <div>
+        <div class="upload-files">
           Перетащите файл сюда или
           <span class="underline">нажмите сюда </span> для выбора файла
         </div>
@@ -128,6 +128,9 @@ export default {
 <style>
 [v-cloak] {
   display: none;
+}
+.upload-files {
+  padding: 100px;
 }
 a.submit-button {
   display: block;
