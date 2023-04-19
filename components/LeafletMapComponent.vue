@@ -118,7 +118,7 @@ import LeftControlWeekList from "./LeftControlWeekList";
 import ChoroplethLayerComponent from "./ChoroplethLayerComponent";
 import forecastStationsJson from "../static/json/forecast_stations.json";
 import mapsJson from "../static/json/maps-full.json";
-
+import * as axios from 'axios';
 export default {
   name: "LeafletMapComponent",
   components: {
@@ -249,7 +249,7 @@ export default {
     async getSettingJson() {
       const axios = require("axios");
       return axios
-        .get("/upload/settings/setting-"+ this.selectedMap.mapURL + ".json")
+        .get("http://localhost:8080/download/setting-"+ this.selectedMap.mapURL + ".json")
         .then((res) => res.data);
     },
     async getStart() {
