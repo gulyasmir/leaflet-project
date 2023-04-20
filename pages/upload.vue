@@ -89,12 +89,12 @@ export default {
           },
         })
         .then(function (res) {
-          this.filelist = []
+         
           // console.log('res', res)
           //console.log("SUCCESS!!");
         })
         .catch(function (err) {
-          this.filelist = []
+         
           // console.log("FAILURE!!", err);
         });
 
