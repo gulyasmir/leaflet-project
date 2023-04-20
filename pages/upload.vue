@@ -71,17 +71,18 @@ export default {
       event.currentTarget.classList.add("bg-gray-100");
       event.currentTarget.classList.remove("bg-green-300");
     },
-    submitFiles() {
+    async submitFiles() {
       this.buttonText = 'Идет загрузка'
       let formData = new FormData();
 
       for (var i = 0; i < this.filelist.length; i++) {
         let file = this.filelist[i];
-
+        console.log('file', file)
         formData.append("filelist[" + i + "]", file);
       }
-      axios
-        .post("https://server-leaflet.herokuapp.com/fileupload", formData, {
+      console.log('formData', formData)
+     let uploadResult = await axios
+        .post("http://localhost:8080/fileupload", formData, {
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': '*',
@@ -90,21 +91,16 @@ export default {
           },
         })
         .then(function (res) {
-          this.filelist = []
-          this.resultText = 'Файлы успешно загружены!'
-          console.log('res', res)
+           console.log('res', res)
+          return true 
           
         })
         .catch(function (err) {
-          console.log('err', err)
-         
+            console.log('err', err)
+            return false
         });
-
-      setTimeout(() => {
+        this.resultText = uploadResult ? 'Файлы успешно загружены!' : 'Загузка не удалась!'
         this.filelist = []
-          this.resultText = 'Загузка не удалась!'
-
-      }, 10000)
     },
   },
 };
