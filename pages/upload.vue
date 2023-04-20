@@ -83,7 +83,7 @@ export default {
       axios
         .post("https://server-leaflet.herokuapp.com/fileupload", formData, {
           headers: {
-            "Allow": "*",
+            "Access-Control-Allow-Headers": "*",
             "Access-Control-Allow-Origin": "*",
             "Content-Type": "multipart/form-data",
           },
