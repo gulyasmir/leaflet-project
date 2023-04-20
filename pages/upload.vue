@@ -91,7 +91,7 @@ export default {
         })
         .then(function (res) {
          
-          // console.log('res', res)
+           console.log('res', res)
           //console.log("SUCCESS!!");
         })
         .catch(function (err) {
