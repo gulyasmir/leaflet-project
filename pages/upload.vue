@@ -82,7 +82,7 @@ export default {
       }
       console.log('formData', formData)
      let uploadResult = await axios
-        .post("http://localhost:8080/fileupload", formData, {
+        .post("https://server-leaflet.herokuapp.com/fileupload", formData, {
           headers: {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': '*',
