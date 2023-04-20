@@ -20,8 +20,9 @@
 
       <label for="assetsFieldHandle" class="block cursor-pointer">
         <div class="upload-files">
-          Перетащите файл сюда или
-          <span class="underline">нажмите сюда </span> для выбора файла
+          <img src="/images/icon-to-download.jpg" alt="">
+         <p> Перетащите файлы  или
+          <span class="underline">нажмите сюда </span> для выбора файла</p>
         </div>
       </label>
       <ul class="mt-4" v-if="this.filelist.length" v-cloak>
@@ -44,8 +45,9 @@
         v-show="filelist.length > 0"
         >{{ buttonText }}</a
       >
+      <h2> {{ resultText }}</h2>
     </div>
-    <h2> {{ resultText }}</h2>
+   
   </div>
 </template>
 
@@ -129,8 +131,9 @@ export default {
 [v-cloak] {
   display: none;
 }
-.upload-files {
-  padding: 100px;
+
+.upload-files img {
+  height: 100px;
 }
 a.submit-button {
   display: block;
@@ -174,7 +177,7 @@ ul li {
 .border-gray {
   border: 1px solid #888;
   background-color: antiquewhite;
-  padding: 50px;
+  padding:15px 50px;
 }
 .upload-button {
   border-radius: 3px;
