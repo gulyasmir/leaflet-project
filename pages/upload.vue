@@ -102,7 +102,7 @@ export default {
         formData.append("filelist[" + i + "]", file);
       }
       axios
-        .post("http://localhost:8080/fileupload", formData, {
+        .post("https://server-leaflet.herokuapp.com/fileupload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
