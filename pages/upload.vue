@@ -90,20 +90,21 @@ export default {
           },
         })
         .then(function (res) {
-         
-           console.log('res', res)
-          //console.log("SUCCESS!!");
+          this.filelist = []
+          this.resultText = 'Файлы успешно загружены!'
+          console.log('res', res)
+          
         })
         .catch(function (err) {
+          console.log('err', err)
          
-          // console.log("FAILURE!!", err);
         });
 
       setTimeout(() => {
         this.filelist = []
-        this.resultText = 'Файлы успешно загружены!'
+          this.resultText = 'Загузка не удалась!'
 
-      }, 2000)
+      }, 10000)
     },
   },
 };
