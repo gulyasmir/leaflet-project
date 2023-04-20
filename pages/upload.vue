@@ -24,7 +24,7 @@
       </ul>
 
       <a class="submit-button" v-on:click="submitFiles()" v-show="filelist.length > 0">{{ buttonText }}</a>
-      <h2> {{ resultText }}</h2>
+      <h2  v-show="filelist.length == 0"> {{ resultText }}</h2>
     </div>
 
   </div>
