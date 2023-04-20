@@ -1,53 +1,32 @@
 <template>
   <div class="upload-block">
-   
-    <div
-      class="border-gray"
-      @dragover="dragover"
-      @dragleave="dragleave"
-      @drop="drop"
-    >
-      <input
-        type="file"
-        multiple
-        name="fields[assetsFieldHandle][]"
-        id="assetsFieldHandle"
-        class="w-px h-px opacity-0 overflow-hidden absolute"
-        @change="onChange"
-        ref="file"
-        accept=".pdf,.jpg,.jpeg,.png,.svg"
-      />
+
+    <div class="border-gray" @dragover="dragover" @dragleave="dragleave" @drop="drop">
+      <input type="file" multiple name="fields[assetsFieldHandle][]" id="assetsFieldHandle"
+        class="w-px h-px opacity-0 overflow-hidden absolute" @change="onChange" ref="file"
+        accept=".pdf,.jpg,.jpeg,.png,.svg" />
 
       <label for="assetsFieldHandle" class="block cursor-pointer">
         <div class="upload-files">
           <img src="/images/icon-to-download.jpg" alt="">
-         <p> Перетащите файлы  или
-          <span class="underline">нажмите сюда </span> для выбора файла</p>
+          <p> Перетащите файлы или
+            <span class="underline">нажмите сюда </span> для выбора файла
+          </p>
         </div>
       </label>
       <ul class="mt-4" v-if="this.filelist.length" v-cloak>
         <li class="text-sm p-1" v-for="file in filelist">
           <span>{{ file.name }} </span>
-          <button
-            class="upload-button button"
-            type="button"
-            @click="remove(filelist.indexOf(file))"
-            title="Remove file"
-          >
+          <button class="upload-button button" type="button" @click="remove(filelist.indexOf(file))" title="Remove file">
             Удалить
           </button>
         </li>
       </ul>
 
-      <a
-        class="submit-button"
-        v-on:click="submitFiles()"
-        v-show="filelist.length > 0"
-        >{{ buttonText }}</a
-      >
+      <a class="submit-button" v-on:click="submitFiles()" v-show="filelist.length > 0">{{ buttonText }}</a>
       <h2> {{ resultText }}</h2>
     </div>
-   
+
   </div>
 </template>
 
@@ -60,8 +39,8 @@ export default {
       dragAndDropCapable: false,
       files: [],
       uploadPercentage: 0,
-      buttonText:'Отправить',
-      resultText:''
+      buttonText: 'Отправить',
+      resultText: ''
     };
   },
   methods: {
@@ -93,7 +72,7 @@ export default {
       event.currentTarget.classList.remove("bg-green-300");
     },
     submitFiles() {
-    this.buttonText = 'Идет загрузка'
+      this.buttonText = 'Идет загрузка'
       let formData = new FormData();
 
       for (var i = 0; i < this.filelist.length; i++) {
@@ -104,23 +83,25 @@ export default {
       axios
         .post("https://server-leaflet.herokuapp.com/fileupload", formData, {
           headers: {
+            "Allow": "*",
+            "Access-Control-Allow-Origin": "*",
             "Content-Type": "multipart/form-data",
           },
         })
         .then(function (res) {
           this.filelist = []
-         // console.log('res', res)
+          // console.log('res', res)
           //console.log("SUCCESS!!");
         })
         .catch(function (err) {
           this.filelist = []
-        // console.log("FAILURE!!", err);
+          // console.log("FAILURE!!", err);
         });
 
-      setTimeout( () =>{
+      setTimeout(() => {
         this.filelist = []
         this.resultText = 'Файлы успешно загружены!'
-      
+
       }, 2000)
     },
   },
@@ -135,6 +116,7 @@ export default {
 .upload-files img {
   height: 100px;
 }
+
 a.submit-button {
   display: block;
   margin: auto;
@@ -149,12 +131,15 @@ a.submit-button {
   border-radius: 3px;
   cursor: pointer;
 }
+
 .submit-button:hover {
   border-radius: 1px;
 }
+
 ul {
   padding: 0;
 }
+
 ul li {
   list-style: none;
   padding: 5px;
@@ -168,17 +153,21 @@ ul li {
   margin: 5% 30%;
   text-align: center;
 }
+
 .opacity-0 {
   opacity: 0;
 }
+
 .underline {
   border-bottom: 1px solid #888;
 }
+
 .border-gray {
   border: 1px solid #888;
   background-color: antiquewhite;
-  padding:15px 50px;
+  padding: 15px 50px;
 }
+
 .upload-button {
   border-radius: 3px;
   border: 1px solid #cf4b4b;
@@ -186,6 +175,7 @@ ul li {
   color: #fff;
   padding: 3px 10px;
 }
+
 .upload-button:hover {
   border-radius: 1px;
 }
